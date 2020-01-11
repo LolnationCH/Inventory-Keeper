@@ -34,6 +34,10 @@ class BookWidgetEditor extends StatelessWidget
       alignment: Alignment.centerLeft,
       child: Text('Language : ' + bookInfo.language, style: TextStyle(fontSize: 25))
     ),
+    Align(
+      alignment: Alignment.centerLeft,
+      child: Text('ISBN : ' + bookInfo.identifier.getIdentifierVisual(), style: TextStyle(fontSize: 25))
+    ),
   ];
 
   List<Widget> getImportantInfo() => [
