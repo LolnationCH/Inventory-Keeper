@@ -45,6 +45,8 @@ class Book{
 
   String getIdentifier() { return this.identifier.identifier; }
 
+  void setIdentifier(String identifier) { this.identifier.identifier = identifier; }
+
   Book.fromJsonWeb(Map<String, dynamic> jsonItem) {
     dynamic volumeInfo = jsonItem["volumeInfo"];
 

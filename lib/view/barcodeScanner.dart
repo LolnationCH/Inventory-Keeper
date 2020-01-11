@@ -88,6 +88,7 @@ class _BardcodeScanner extends State<BardcodeScanner>{
         {
           if (_books.indexWhere((book) => book.getIdentifier() == result.getIdentifier()) == -1)
           {
+            result.setIdentifier(code);
             _books.add(result);
             widget.storage.writeBooks(_books);
           }
