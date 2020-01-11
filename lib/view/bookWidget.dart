@@ -13,11 +13,11 @@ class BookWidget extends StatelessWidget
   List<Widget> getGenericInfo() => [
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Author(s) : ' + bookInfo.authors.toString(), style: TextStyle(fontSize: 25),)
+      child: Text('Author(s) : ' + bookInfo.getAuthors(), style: TextStyle(fontSize: 25)),
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Volume : ' + (bookInfo.volumeNumber == null ? 'None' : bookInfo.volumeNumber.toString()), style: TextStyle(fontSize: 25))
+      child: Text('Volume : ' + bookInfo.getVolumeNumber(), style: TextStyle(fontSize: 25)),
     ),
     Align(
       alignment: Alignment.centerLeft,
@@ -29,7 +29,7 @@ class BookWidget extends StatelessWidget
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Page Count : ' + bookInfo.pageCount.toString(), style: TextStyle(fontSize: 25))
+      child: Text('Page Count : ' + bookInfo.getPageCount(), style: TextStyle(fontSize: 25))
     ),
     Align(
       alignment: Alignment.centerLeft,
@@ -60,7 +60,6 @@ class BookWidget extends StatelessWidget
         icon: Icon(Icons.edit),
         tooltip: 'Edit fields',
         onPressed: () {
-          // Launch a new scaffold allowing to modify the book
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => BookWidgetEditor(bookInfo: bookInfo)),

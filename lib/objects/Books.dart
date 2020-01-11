@@ -38,14 +38,22 @@ class Book{
   String publisher;
   String publishedDate;
   String description;
-  ISBN identifier;
+  ISBN identifier = new ISBN('0');
   int pageCount;
   String thumbnail = 'https://i.imgur.com/2ilT3Q5.png'; // Default to a no Image
   String language;
 
   String getIdentifier() { return this.identifier.identifier; }
+  String getAuthors() { return this.authors.toString().replaceAll('[', '').replaceAll(']', ''); }
+  String getVolumeNumber() { return this.volumeNumber.toString(); }
+  String getPageCount() { return this.pageCount.toString(); }
 
   void setIdentifier(String identifier) { this.identifier.identifier = identifier; }
+  void setAuthors(String authors) { this.authors = authors.split(','); }
+  void setVolumeNumber(String volumeNumber) { this.volumeNumber = int.tryParse(volumeNumber); }
+  void setPageCount(String pageCount) { this.pageCount = int.tryParse(pageCount); }
+
+  Book();
 
   Book.fromJsonWeb(Map<String, dynamic> jsonItem) {
     dynamic volumeInfo = jsonItem["volumeInfo"];
