@@ -1,59 +1,104 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:inventory_keeper/queries/SaveFile.dart';
 
 import '../objects/Books.dart';
 
-class BookWidgetEditor extends StatelessWidget
-{
-  BookWidgetEditor({@required this.bookInfo});
+class BookWidgetEditor extends StatefulWidget {
   final Book bookInfo;
+
+  BookWidgetEditor({@required this.bookInfo});
+
+  @override
+  _BookWidgetEditor createState() => _BookWidgetEditor();
+}
+
+class _BookWidgetEditor extends State<BookWidgetEditor>
+{
+  TextEditingController titleController;
+  TextEditingController descriptionController;
+  TextEditingController authorController;
+  TextEditingController volumeController;
+  TextEditingController publisherController;
+  TextEditingController publishedDateController;
+  TextEditingController pageCountController;
+  TextEditingController languageController;
+  TextEditingController isbnController;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(text: widget.bookInfo.title);
+    descriptionController = TextEditingController(text: widget.bookInfo.description);
+    authorController = TextEditingController(text: widget.bookInfo.getAuthors());
+    volumeController = TextEditingController(text: widget.bookInfo.getVolumeNumber());
+    publisherController = TextEditingController(text: widget.bookInfo.publisher);
+    publishedDateController = TextEditingController(text: widget.bookInfo.publishedDate);
+    pageCountController = TextEditingController(text: widget.bookInfo.getPageCount());
+    languageController = TextEditingController(text: widget.bookInfo.language);
+    isbnController = TextEditingController(text: widget.bookInfo.getIdentifier());
+  }
 
   List<Widget> getGenericInfo() => [
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Author(s) : ' + bookInfo.authors.toString(), style: TextStyle(fontSize: 25),)
+      child:TextField(controller: titleController),
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Volume : ' + (bookInfo.volumeNumber == null ? 'None' : bookInfo.volumeNumber.toString()), style: TextStyle(fontSize: 25))
+      child: TextField(controller: authorController)
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Publisher : ' + bookInfo.publisher, style: TextStyle(fontSize: 25))
+      child: TextField(
+        controller: volumeController,
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          WhitelistingTextInputFormatter.digitsOnly
+        ]
+      )
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Published Date : ' + bookInfo.publishedDate, style: TextStyle(fontSize: 25))
+      child: TextField(controller: publisherController)
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Page Count : ' + bookInfo.pageCount.toString(), style: TextStyle(fontSize: 25))
+      child: TextField(controller: publishedDateController)
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Language : ' + bookInfo.language, style: TextStyle(fontSize: 25))
+      child: TextField(controller: pageCountController,
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          WhitelistingTextInputFormatter.digitsOnly
+        ]
+      )
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('ISBN : ' + bookInfo.identifier.getIdentifierVisual(), style: TextStyle(fontSize: 25))
+      child: TextField(controller: languageController)
     ),
-  ];
-
-  List<Widget> getImportantInfo() => [
-    Text(bookInfo.title, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-    Text(''),
-    Text(bookInfo.description, style: TextStyle(fontSize: 20))
+    Align(
+      alignment: Alignment.centerLeft,
+      child: TextField(controller: isbnController,
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          WhitelistingTextInputFormatter.digitsOnly
+        ]
+      )
+    ),
   ];
 
   CachedNetworkImage getBookImage() => CachedNetworkImage(
-    imageUrl: bookInfo.thumbnail,
+    imageUrl: widget.bookInfo.thumbnail,
     placeholder: (context, url) => CircularProgressIndicator(),
     errorWidget: (context, url, error) => Icon(Icons.error),
   );
 
   AppBar getAppBar() => AppBar(
-    title: Text(bookInfo.title),
+    title: Text(widget.bookInfo.title),
     actions: <Widget>[
       IconButton(
         icon: Icon(Icons.edit),
@@ -66,8 +111,18 @@ class BookWidgetEditor extends StatelessWidget
   );
 
   Book getBookEdited() {
-    // TODO : Fetch the fields and remake the book
-    Book bookEdited = Book.fromJson(bookInfo.toJson());
+    Book bookEdited = Book.fromJson(widget.bookInfo.toJson());
+
+    bookEdited.title = titleController.text;
+    bookEdited.description = descriptionController.text;
+    bookEdited.setAuthors(authorController.text);
+    bookEdited.setVolumeNumber(volumeController.text);
+    bookEdited.publisher = publisherController.text;
+    bookEdited.publishedDate = publishedDateController.text;
+    bookEdited.setPageCount(pageCountController.text);
+    bookEdited.language = languageController.text;
+    bookEdited.setIdentifier(isbnController.text);
+    
     return bookEdited;
   }
 
@@ -78,6 +133,7 @@ class BookWidgetEditor extends StatelessWidget
     onPressed: () {
       JsonStorage storage = new JsonStorage();
       List<Book> _books = new List<Book>();
+      Book editedBook;
       storage.readBooks().then((books){
         if (books != null && books.length != 0)
         {
@@ -85,11 +141,12 @@ class BookWidgetEditor extends StatelessWidget
           for (int i = 0; i< books.length; i++)
             _books.add(Book.fromJson(books[i]));
 
-          int index = _books.indexWhere((book) => book.getIdentifier() == bookInfo.getIdentifier());
+          int index = _books.indexWhere((book) => book.getIdentifier() == widget.bookInfo.getIdentifier());
           if (index != -1)
             _books.removeAt(index);
 
-          _books.add(getBookEdited());
+          editedBook = getBookEdited();
+          _books.add(editedBook);
 
           storage.writeBooks(_books);
         }
@@ -109,8 +166,19 @@ class BookWidgetEditor extends StatelessWidget
           Flexible(
             child: ListView(
               children: <Widget>[
-                Column(children: getImportantInfo())
-              ] + getGenericInfo()
+                Column(children: getGenericInfo()),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: descriptionController,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                      )
+                    ),
+                  ],
+                ),
+              ]
           )),
           getSaveButton(context),
         ],
@@ -130,17 +198,22 @@ class BookWidgetEditor extends StatelessWidget
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children:<Widget>[
-                  getBookImage(),
-                  Expanded(
-                    child:Container(
-                      margin: EdgeInsets.only(left: 6),
-                      child:Column( children: getImportantInfo())
-                    )
-                  )
-                ]
+                  getBookImage()
+                ],
               ),
               Column(
                 children: getGenericInfo()
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      controller: descriptionController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                    )
+                  ),
+                ],
               ),
               getSaveButton(context),
             ]
@@ -160,5 +233,21 @@ class BookWidgetEditor extends StatelessWidget
             return getPotraitScaffold(context);
       }
     );
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+
+    // Dispose of the controller
+    titleController.dispose();
+    descriptionController.dispose();
+    authorController.dispose();
+    volumeController.dispose();
+    publisherController.dispose();
+    publishedDateController.dispose();
+    pageCountController.dispose();
+    languageController.dispose();
+    isbnController.dispose();
   }
 }

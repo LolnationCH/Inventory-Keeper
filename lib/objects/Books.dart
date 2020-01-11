@@ -126,7 +126,7 @@ class Book{
     'publisher':     publisher,
     'publishedDate': publishedDate,
     'description':   description,
-    'identifier':    identifier,
+    'identifier':    identifier.toJson(),
     'pageCount':     pageCount,
     'thumbnail':     thumbnail,
     'language':      language,
