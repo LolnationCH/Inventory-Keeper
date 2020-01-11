@@ -64,6 +64,19 @@ class _CatalogWidget extends State<CatalogWidget>
     });
   }
 
+  void initBooks() async{
+    dynamic books = await widget.storage.readBooks();
+    if (books == null || books.length == 0)
+      _books = new List<Book>();
+    else{
+      _books = new List<Book>();
+      for (int i = 0; i< books.length; i++)
+        _books.add(Book.fromJson(books[i]));
+    }
+
+    setupBooksContainer();
+  }
+
   void init() async{
     dynamic books = await widget.storage.readBooks();
     if (books == null || books.length == 0)
@@ -132,6 +145,7 @@ class _CatalogWidget extends State<CatalogWidget>
 
   @override
   Widget build(BuildContext context) {
+    initBooks();
     if (_booksContainer == null || _booksContainer.length == 0)
       return createDefaultScaffold();
     else
