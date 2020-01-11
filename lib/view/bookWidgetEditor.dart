@@ -98,16 +98,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
   );
 
   AppBar getAppBar() => AppBar(
-    title: Text(widget.bookInfo.title),
-    actions: <Widget>[
-      IconButton(
-        icon: Icon(Icons.edit),
-        tooltip: 'Edit fields',
-        onPressed: () {
-          // Launch a new scaffold allowing to modify the book
-        }
-      ),
-    ],
+    title: Text(widget.bookInfo.title)
   );
 
   Book getBookEdited() {
@@ -131,27 +122,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     color: Colors.green,
     textColor: Colors.white,
     onPressed: () {
-      JsonStorage storage = new JsonStorage();
-      List<Book> _books = new List<Book>();
-      Book editedBook;
-      storage.readBooks().then((books){
-        if (books != null && books.length != 0)
-        {
-          _books = new List<Book>();
-          for (int i = 0; i< books.length; i++)
-            _books.add(Book.fromJson(books[i]));
-
-          int index = _books.indexWhere((book) => book.getIdentifier() == widget.bookInfo.getIdentifier());
-          if (index != -1)
-            _books.removeAt(index);
-
-          editedBook = getBookEdited();
-          _books.add(editedBook);
-
-          storage.writeBooks(_books);
-        }
-      });
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(getBookEdited());
     },
   );
   

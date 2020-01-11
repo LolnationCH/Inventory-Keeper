@@ -1,60 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:inventory_keeper/queries/SaveFile.dart';
 
 import '../objects/Books.dart';
 
 import 'bookWidgetEditor.dart';
 
-class BookWidget extends StatelessWidget
+class BookWidget extends StatefulWidget
 {
   BookWidget({@required this.bookInfo});
   final Book bookInfo;
 
+  @override
+  _BookWidget createState() => _BookWidget();
+}
+
+class _BookWidget extends State<BookWidget>
+{
+  Book bookShown;
+
+  @override
+  void initState(){
+    super.initState();
+    bookShown = widget.bookInfo;
+  }
+
   List<Widget> getGenericInfo() => [
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Author(s) : ' + bookInfo.getAuthors(), style: TextStyle(fontSize: 25)),
+      child: Text('Author(s) : ' + bookShown.getAuthors(), style: TextStyle(fontSize: 25)),
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Volume : ' + bookInfo.getVolumeNumber(), style: TextStyle(fontSize: 25)),
+      child: Text('Volume : ' + bookShown.getVolumeNumber(), style: TextStyle(fontSize: 25)),
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Publisher : ' + bookInfo.publisher, style: TextStyle(fontSize: 25))
+      child: Text('Publisher : ' + bookShown.publisher, style: TextStyle(fontSize: 25))
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Published Date : ' + bookInfo.publishedDate, style: TextStyle(fontSize: 25))
+      child: Text('Published Date : ' + bookShown.publishedDate, style: TextStyle(fontSize: 25))
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Page Count : ' + bookInfo.getPageCount(), style: TextStyle(fontSize: 25))
+      child: Text('Page Count : ' + bookShown.getPageCount(), style: TextStyle(fontSize: 25))
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Language : ' + bookInfo.language, style: TextStyle(fontSize: 25))
+      child: Text('Language : ' + bookShown.language, style: TextStyle(fontSize: 25))
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('ISBN : ' + bookInfo.identifier.getIdentifierVisual(), style: TextStyle(fontSize: 25))
+      child: Text('ISBN : ' + bookShown.identifier.getIdentifierVisual(), style: TextStyle(fontSize: 25))
     ),
   ];
 
   List<Widget> getImportantInfo() => [
-    Text(bookInfo.title, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+    Text(bookShown.title, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
     Text(''),
-    Text(bookInfo.description, style: TextStyle(fontSize: 20))
+    Text(bookShown.description, style: TextStyle(fontSize: 20))
   ];
 
   CachedNetworkImage getBookImage() => CachedNetworkImage(
-    imageUrl: bookInfo.thumbnail,
+    imageUrl: bookShown.thumbnail,
     placeholder: (context, url) => CircularProgressIndicator(),
     errorWidget: (context, url, error) => Icon(Icons.error),
   );
 
   AppBar getAppBar(BuildContext context) => AppBar(
-    title: Text(bookInfo.title),
+    title: Text(bookShown.title),
     actions: <Widget>[
       IconButton(
         icon: Icon(Icons.edit),
@@ -62,8 +77,29 @@ class BookWidget extends StatelessWidget
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => BookWidgetEditor(bookInfo: bookInfo)),
-          );
+            MaterialPageRoute(builder: (context) => BookWidgetEditor(bookInfo: bookShown)),
+          ).then((result) {
+            JsonStorage storage = new JsonStorage();
+            List<Book> _books = new List<Book>();
+            Book editedBook = result;
+            storage.readBooks().then((books) {
+              if (books != null && books.length != 0)
+              {
+                _books = new List<Book>();
+                for (int i = 0; i< books.length; i++)
+                  _books.add(Book.fromJson(books[i]));
+
+                int index = _books.indexWhere((book) => book.getIdentifier() == widget.bookInfo.getIdentifier());
+                if (index != -1)
+                  _books.removeAt(index);
+
+                _books.add(editedBook);
+
+                storage.writeBooks(_books);
+              }
+            });
+            bookShown = editedBook;
+          });
         }
       ),
     ],
