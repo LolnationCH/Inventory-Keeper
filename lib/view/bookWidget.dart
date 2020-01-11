@@ -90,7 +90,6 @@ class BookWidget extends StatelessWidget
       appBar: getAppBar(context),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.all(6),
           child: Column(
             children:<Widget>[
               Row(
@@ -100,7 +99,6 @@ class BookWidget extends StatelessWidget
                   getBookImage(),
                   Expanded(
                     child:Container(
-                      margin: EdgeInsets.only(left: 6),
                       child:Column( children: getImportantInfo())
                     )
                   )

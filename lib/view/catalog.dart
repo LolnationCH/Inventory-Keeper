@@ -98,7 +98,10 @@ class _CatalogWidget extends State<CatalogWidget>
       body: OrientationBuilder(
       builder: (context, orientation) {
         return GridView.count(
-          crossAxisCount: orientation == Orientation.portrait ? 2 : 5,
+          crossAxisCount: orientation == Orientation.portrait ? 3 : 7,
+          childAspectRatio: 0.80,
+          mainAxisSpacing: 0,
+          crossAxisSpacing: 0,
           children: _booksContainer
           );
       }),

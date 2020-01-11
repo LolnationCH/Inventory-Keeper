@@ -11,7 +11,7 @@ class BookContainer extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return FlatButton(
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.all(4),
       child:
         CachedNetworkImage(
           imageUrl: info.thumbnail,
