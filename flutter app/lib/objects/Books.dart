@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 const Map<int, String> ISBN_type = {
   10 : "ISBN_10",
   13 : "ISBN_13"
@@ -152,4 +154,17 @@ List<Book> getFromRawJsonWeb(Map<String, dynamic> jsonResponse) {
     books.add(Book.fromJsonWeb(items[i]));
   }
   return books;
+}
+
+List<Book> getFromJson(List<dynamic> jsonRes) {
+  List<Book> books = new List<Book>();
+  for (int i =0; i < jsonRes.length; i++)
+  {
+    books.add(Book.fromJson(jsonRes[i]));
+  }
+  return books;
+}
+
+String getToJson(List<Book> books) {
+  return jsonEncode(books);
 }

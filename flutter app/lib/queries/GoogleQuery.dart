@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 
 String queryAPI = 'https://www.googleapis.com/books/v1/volumes?q=isbn';
 
-Future<dynamic> getBookData(String ISBN) async {
+Future<dynamic> getBookData(String isbn) async {
     var response = await http.get(
-    Uri.encodeFull(queryAPI + ISBN),
+    Uri.encodeFull(queryAPI + isbn),
     headers: {"Accept": "application/json"}); 
     return json.decode(response.body);
 }

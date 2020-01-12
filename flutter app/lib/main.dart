@@ -6,6 +6,7 @@ import 'objects/Books.dart';
 import 'view/barcodeScanner.dart';
 import 'view/catalog.dart';
 import 'queries/SaveFile.dart';
+import 'queries/LocalServer.dart';
 
 void main() => runApp(MyApp());
 
@@ -85,12 +86,20 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       FlatButton(
-        child: Text("Force-Sync with server"),
+        child: Text("Force-Download with server"),
         color: Colors.cyan,
         textColor: Colors.white,
         padding: EdgeInsets.all(8.0),
         onPressed: (){
-          _syncWithServer(context);
+          showChoiceDialog(context, "Sync with server", "Upload or download from server?",
+          () {
+            _uploadWithServer(context);
+          },
+          (){
+            _downloadWithServer(context);
+          },
+          yesButtonLabel: "Upload",
+          noButtonLabel:  "Download");
         },
       ),
     ],
@@ -138,11 +147,19 @@ class _MyHomePageState extends State<MyHomePage> {
         style: TextStyle(color: Colors.grey),
       ),
       ListTile(
-        leading: Icon(Icons.sync),
-        title: Text('Server sync'),
+        leading: Icon(Icons.cloud_download),
+        title: Text('Server download'),
         onTap: () {
           Navigator.pop(context);
-          _syncWithServer(context);
+          _downloadWithServer(context);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.cloud_upload),
+        title: Text('Server upload'),
+        onTap: () {
+          Navigator.pop(context);
+          _uploadWithServer(context);
         },
       ),
       ListTile(
@@ -238,8 +255,30 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _syncWithServer(BuildContext context){
-    showStatusMessage(context, "Syncronization", "Successfully syncronize with server");
+  void _downloadWithServer(BuildContext context){
+    getBookData().then((res) {
+      if (res != null)
+      {
+        List<Book> bookFetched = getFromJson(res);
+        this.storage.writeBooks(bookFetched);
+        showStatusMessage(context, "Download from server", "Successfully downloaded data from server");
+      }
+      else
+        showErrorMessage(context, "Download from server", "Could not connect to server");
+    });
+  }
+
+  void _uploadWithServer(BuildContext context){
+    this.storage.readBooks().then((books) {
+      sendBookData(books).then((response) {
+        if (response != null)
+          showStatusMessage(context, "Upload from server", "Successfully uploaded to the server");
+        else 
+          showErrorMessage(context, "Upload from server", "Could not connect to server");
+      }).catchError((onError){
+        showErrorMessage(context, "Upload from server", "Error $onError");
+      });
+    });
   }
 
   @override

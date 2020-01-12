@@ -27,7 +27,8 @@ dynamic showBasicDialog(BuildContext context, String title, String description) 
   );
 }
 
-dynamic showChoiceDialog(BuildContext context, String title, String description, Function onYesPressed, Function onNoPressed) {
+dynamic showChoiceDialog(BuildContext context, String title, String description, Function onYesPressed, Function onNoPressed,
+                         { String yesButtonLabel = "Yes", String noButtonLabel = "No"}) {
   return showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -41,7 +42,7 @@ dynamic showChoiceDialog(BuildContext context, String title, String description,
             disabledColor: Colors.grey,
             disabledTextColor: Colors.black,
             padding: EdgeInsets.all(8.0),
-            child: new Text("Yes"),
+            child: new Text(yesButtonLabel),
             onPressed: () {
               onYesPressed();
             },
@@ -52,7 +53,7 @@ dynamic showChoiceDialog(BuildContext context, String title, String description,
             disabledColor: Colors.grey,
             disabledTextColor: Colors.black,
             padding: EdgeInsets.all(8.0),
-            child: new Text("No"),
+            child: new Text(noButtonLabel),
             onPressed: () {
               onNoPressed();
             },
@@ -74,5 +75,19 @@ void showStatusMessage(BuildContext context, String title, String description){
       color: Colors.blue[300],
     ),
     leftBarIndicatorColor: Colors.blue[300],
+  )..show(context);
+}
+
+void showErrorMessage(BuildContext context, String title, String description){
+  Flushbar(
+    title: title,
+    message: description,
+    duration:  Duration(seconds: 5),              
+    icon: Icon(
+      Icons.error_outline,
+      size: 28.0,
+      color: Colors.red,
+    ),
+    leftBarIndicatorColor: Colors.red,
   )..show(context);
 }
