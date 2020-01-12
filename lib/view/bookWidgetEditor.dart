@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:inventory_keeper/queries/SaveFile.dart';
 
 import '../objects/Books.dart';
 
@@ -43,15 +42,16 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
   List<Widget> getGenericInfo() => [
     Align(
       alignment: Alignment.centerLeft,
-      child: TextField(controller: titleController),
+      child: TextField(decoration: InputDecoration(labelText: 'Title'), controller: titleController),
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: TextField(controller: authorController)
+      child: TextField(decoration: InputDecoration(labelText: 'Authors'), controller: authorController)
     ),
     Align(
       alignment: Alignment.centerLeft,
       child: TextField(
+        decoration: InputDecoration(labelText: 'Volume'), 
         controller: volumeController,
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
@@ -61,15 +61,17 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: TextField(controller: publisherController)
+      child: TextField(decoration: InputDecoration(labelText: 'Publisher'), controller: publisherController)
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: TextField(controller: publishedDateController)
+      child: TextField(decoration: InputDecoration(labelText: 'Publisher date'), controller: publishedDateController)
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: TextField(controller: pageCountController,
+      child: TextField(
+        decoration: InputDecoration(labelText: 'Page count'),
+        controller: pageCountController,
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
           WhitelistingTextInputFormatter.digitsOnly
@@ -78,11 +80,13 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: TextField(controller: languageController)
+      child: TextField(decoration: InputDecoration(labelText: 'Language'), controller: languageController)
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: TextField(controller: isbnController,
+      child: TextField(
+        decoration: InputDecoration(labelText: 'ISBN'), 
+        controller: isbnController,
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
           WhitelistingTextInputFormatter.digitsOnly

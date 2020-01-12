@@ -45,8 +45,8 @@ class Book{
 
   String getIdentifier() { return this.identifier.identifier; }
   String getAuthors() { return this.authors.toString().replaceAll('[', '').replaceAll(']', ''); }
-  String getVolumeNumber() { return this.volumeNumber.toString(); }
-  String getPageCount() { return this.pageCount.toString(); }
+  String getVolumeNumber() { return this.volumeNumber == null ? '-1' : this.volumeNumber.toString(); }
+  String getPageCount() { return this.pageCount == null ? '-1' : this.pageCount.toString(); }
 
   void setIdentifier(String identifier) { this.identifier.identifier = identifier; }
   void setAuthors(String authors) { this.authors = authors.split(','); }
