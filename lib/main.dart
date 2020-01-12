@@ -93,6 +93,98 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      drawer: Drawer(
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Align(
+                alignment: Alignment.center,
+                child: Text('Inventory Keeper'),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.purple[400],
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.add),
+              title: Text('Scan add'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BardcodeScanner(storage: this.storage)),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.add_box),
+              title: Text('Manual add'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BookWidgetEditor(bookInfo: Book())),
+                ).then((result) {
+                  _manuelAddBook(result);
+                });
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.archive),
+              title: Text('Catalog'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CatalogWidget(storage: this.storage)),
+                );
+              },
+            ),
+            Divider(),
+            Text(
+              " Data management",
+              style: TextStyle(color: Colors.grey),
+            ),
+            ListTile(
+              leading: Icon(Icons.sync),
+              title: Text('Server sync'),
+              onTap: () {
+                // Update the state of the app.
+                // ...
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.file_upload),
+              title: Text('Export to file'),
+              onTap: () {
+                this.storage.exportBooks();
+                _showStatusMessage("Catalog exported!", "The catalog was exported to the file : ");
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.file_download),
+              title: Text('Import from file'),
+              onTap: () {
+                this.storage.importBooks();
+                _showStatusMessage("Catalog imported!", "The catalog was imported from the file : ");
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.delete_forever),
+              title: Text('Delete'),
+              onTap: () {
+                _deleteConfirmationDialog();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -122,35 +214,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   context,
                   MaterialPageRoute(builder: (context) => CatalogWidget(storage: this.storage)),
                 );
-              },
-            ),
-            new FlatButton(
-              child: Text("Export"),
-              color: Colors.yellow,
-              textColor: Colors.black,
-              padding: EdgeInsets.all(8.0),
-              onPressed: (){
-                this.storage.exportBooks();
-                _showStatusMessage("Catalog exported!", "The catalog was exported to the file : ");
-              },
-            ),
-            new FlatButton(
-              child: Text("Import"),
-              color: Colors.purple,
-              textColor: Colors.white,
-              padding: EdgeInsets.all(8.0),
-              onPressed: (){
-                this.storage.importBooks();
-                _showStatusMessage("Catalog imported!", "The catalog was imported from the file : ");
-              },
-            ),
-            new FlatButton(
-              child: Text("Delete"),
-              color: Colors.red,
-              textColor: Colors.white,
-              padding: EdgeInsets.all(8.0),
-              onPressed: (){
-                _deleteConfirmationDialog();
               },
             ),
           ],
