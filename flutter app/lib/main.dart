@@ -251,16 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: Drawer(
         child: _makeDrawerListView(),
       ),
-      body: _makeHomePage(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _manualAdd(context);
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        tooltip: "Add manually the book",
-      ),
+      body: _makeHomePage()
     );
   }
 }
