@@ -63,8 +63,27 @@ class JsonStorage {
     }
   }
 
+  Future<File> importBooks() async {
+    try {
+      final file = await _dataFile;
+      final extFile = await _extDataFile;
+
+      // Read the file
+      String contents = await extFile.readAsString();
+      return file.writeAsString(contents);
+    }
+    catch(e){
+      return null;
+    }
+  }
+
   Future<FileSystemEntity> deleteBooks() async {
     final file = await _dataFile;
     return file.delete();
+  }
+
+  Future<String> getExtPath() async {
+    File file = await _extDataFile;
+    return file.path;
   }
 }

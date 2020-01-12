@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../dialogs.dart';
 import '../objects/Books.dart';
 
 class BookWidgetEditor extends StatefulWidget {
@@ -132,28 +133,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
         Navigator.of(context).pop(bookEdited);
       else
       {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: new Text("Missing fields"),
-              content: new Text("You must provide a value for the title and the ISBN"),
-              actions: <Widget>[
-                new FlatButton(
-                  color: Colors.green,
-                  textColor: Colors.white,
-                  disabledColor: Colors.grey,
-                  disabledTextColor: Colors.black,
-                  padding: EdgeInsets.all(8.0),
-                  child: new Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
+       showBasicDialog(context, "Missing fields", "You must provide a value for the title and the ISBN") ;
       }
     },
   );

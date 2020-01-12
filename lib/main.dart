@@ -1,6 +1,8 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:inventory_keeper/view/bookWidgetEditor.dart';
 
+import 'dialogs.dart';
 import 'objects/Books.dart';
 import 'view/barcodeScanner.dart';
 import 'view/catalog.dart';
@@ -35,36 +37,54 @@ class _MyHomePageState extends State<MyHomePage> {
   JsonStorage storage = new JsonStorage();
 
   void _deleteConfirmationDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("Delete book catalog"),
-          content: new Text("Are you sure you want to delete all of your books? This action is irreversible!"),
-          actions: <Widget>[
-            new FlatButton(
-              color: Colors.red,
-              textColor: Colors.white,
-              padding: EdgeInsets.all(8.0),
-              child: new Text("Yes"),
-              onPressed: () {
-                this.storage.deleteBooks();
-                Navigator.of(context).pop();
-              },
-            ),
-            new FlatButton(
-              color: Colors.green,
-              textColor: Colors.white,
-              padding: EdgeInsets.all(8.0),
-              child: new Text("No"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    showChoiceDialog(context, "Delete book catalog", "Are you sure you want to delete all of your books? This action is irreversible!",
+    () {
+      this.storage.deleteBooks();
+      Navigator.of(context).pop();
+    },
+    () {
+      Navigator.of(context).pop();
+    });
+  }
+
+  void _manuelAddBook(Book enteredBook){
+    if (enteredBook == null || enteredBook.title.isEmpty || enteredBook.getIdentifier().isEmpty)
+      return;
+
+    JsonStorage storage = new JsonStorage();
+    List<Book> _books = new List<Book>();
+    
+    storage.readBooks().then((books) {
+      if (books != null && books.length != 0)
+      {
+        _books = new List<Book>();
+        for (int i = 0; i< books.length; i++)
+          _books.add(Book.fromJson(books[i]));
+
+        int index = _books.indexWhere((book) => book.getIdentifier() == enteredBook.getIdentifier());
+        if (index == -1)
+        {
+          _books.add(enteredBook);
+          storage.writeBooks(_books);
+        }
+      }
+    });
+  }
+
+  void _showStatusMessage(String title, String description){
+    this.storage.getExtPath().then((path) {
+      Flushbar(
+        title: title,
+        message: description + path,
+        duration:  Duration(seconds: 5),              
+        icon: Icon(
+          Icons.info_outline,
+          size: 28.0,
+          color: Colors.blue[300],
+        ),
+        leftBarIndicatorColor: Colors.blue[300],
+      )..show(context);
+    });
   }
 
   @override
@@ -88,27 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   context,
                   MaterialPageRoute(builder: (context) => BookWidgetEditor(bookInfo: Book())),
                 ).then((result) {
-                  if (result != null && result.title.isNotEmpty && result.getIdentifier().isNotEmpty)
-                  {
-                    JsonStorage storage = new JsonStorage();
-                    List<Book> _books = new List<Book>();
-                    
-                    storage.readBooks().then((books) {
-                      if (books != null && books.length != 0)
-                      {
-                        _books = new List<Book>();
-                        for (int i = 0; i< books.length; i++)
-                          _books.add(Book.fromJson(books[i]));
-
-                        int index = _books.indexWhere((book) => book.getIdentifier() == result.getIdentifier());
-                        if (index == -1)
-                        {
-                          _books.add(result);
-                          storage.writeBooks(_books);
-                        }
-                      }
-                    });
-                  }
+                  _manuelAddBook(result);
                 });
               },
             ),
@@ -131,6 +131,17 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: EdgeInsets.all(8.0),
               onPressed: (){
                 this.storage.exportBooks();
+                _showStatusMessage("Catalog exported!", "The catalog was exported to the file : ");
+              },
+            ),
+            new FlatButton(
+              child: Text("Import"),
+              color: Colors.purple,
+              textColor: Colors.white,
+              padding: EdgeInsets.all(8.0),
+              onPressed: (){
+                this.storage.importBooks();
+                _showStatusMessage("Catalog imported!", "The catalog was imported from the file : ");
               },
             ),
             new FlatButton(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_mobile_vision/qr_camera.dart';
 
+import '../dialogs.dart';
 import '../objects/Books.dart';
 import '../queries/GoogleQuery.dart';
 import '../queries/SaveFile.dart';
@@ -43,36 +44,11 @@ class _BardcodeScanner extends State<BardcodeScanner>{
     return "Erreur, ISBN can only be either 13 or 10 number long";
   }
 
-  void _noBookFound(String code){
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("No book found"),
-          content: new Text("No book was found for the ISBN \"${code}\""),
-          actions: <Widget>[
-            new FlatButton(
-              color: Colors.green,
-              textColor: Colors.white,
-              disabledColor: Colors.grey,
-              disabledTextColor: Colors.black,
-              padding: EdgeInsets.all(8.0),
-              child: new Text("Ok"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _confirmAddition(String code, Map<String, dynamic> response) {
     dynamic items = response['items'];
     if (items == null || items.length == 0)
     {
-      _noBookFound(code);
+      showBasicDialog(context, "No book found", "No book was found for the ISBN \"$code\"");
       return;
     }
 
@@ -97,69 +73,23 @@ class _BardcodeScanner extends State<BardcodeScanner>{
       });
     }
     else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: new Text("Add book to catalog"),
-            content: new Text("Are you sure you want to add ${temp.title} to your catalog?"),
-            actions: <Widget>[
-              new FlatButton(
-                color: Colors.green,
-                textColor: Colors.white,
-                disabledColor: Colors.grey,
-                disabledTextColor: Colors.black,
-                padding: EdgeInsets.all(8.0),
-                child: new Text("Yes"),
-                onPressed: () {
-                  _books.add(temp);
-                  widget.storage.writeBooks(_books);
-                  Navigator.of(context).pop();
-                },
-              ),
-              new FlatButton(
-                color: Colors.red,
-                textColor: Colors.white,
-                disabledColor: Colors.grey,
-                disabledTextColor: Colors.black,
-                padding: EdgeInsets.all(8.0),
-                child: new Text("No"),
-                onPressed: () {
-                  _isbnSet.remove(code);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
+      showChoiceDialog(context, "Add book to catalog", "Are you sure you want to add ${temp.title} to your catalog?",
+       () {
+        _books.add(temp);
+        widget.storage.writeBooks(_books);
+        Navigator.of(context).pop();
+       },
+       () {
+        _isbnSet.remove(code);
+        Navigator.of(context).pop();
+       }
       );
     }
   }
 
   void _scanAlert(String code) {
     Book temp = _books[_books.indexWhere((book) => book.getIdentifier() == code)];
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("Book is already in catalog"),
-          content: new Text("The book \"${temp.title}\" is already in your catalog."),
-          actions: <Widget>[
-            new FlatButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              disabledColor: Colors.grey,
-              disabledTextColor: Colors.black,
-              padding: EdgeInsets.all(8.0),
-              child: new Text("Ok"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    showBasicDialog(context, "Book is already in catalog", "The book \"${temp.title}\" is already in your catalog.");
   }
 
   void _scanCode(code){
