@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_keeper/view/bookContainer.dart';
+import 'package:inventory_keeper/view/catalogSearch.dart';
 
 import '../objects/Books.dart';
 import '../queries/SaveFile.dart';
@@ -109,15 +110,24 @@ class _CatalogWidget extends State<CatalogWidget>
     return Scaffold(
       appBar: createAppBar(),
       body: OrientationBuilder(
-      builder: (context, orientation) {
-        return GridView.count(
-          crossAxisCount: orientation == Orientation.portrait ? 3 : 7,
-          childAspectRatio: 0.80,
-          mainAxisSpacing: 0,
-          crossAxisSpacing: 0,
-          children: _booksContainer
+        builder: (context, orientation) {
+          return GridView.count(
+            crossAxisCount: orientation == Orientation.portrait ? 3 : 7,
+            childAspectRatio: 0.80,
+            mainAxisSpacing: 0,
+            crossAxisSpacing: 0,
+            children: _booksContainer
           );
-      }),
+        }
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showSearch(context: context, delegate: CatalogSearch(_books));
+        },
+        child: Icon(Icons.search),
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
+      ),
     );
   }
 

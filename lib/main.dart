@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Inventory Keeper',
       theme: ThemeData(),
       darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       home: MyHomePage(title: 'Inventory Keeper Home Page'),
     );
   }
