@@ -1,4 +1,5 @@
 
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
 dynamic showBasicDialog(BuildContext context, String title, String description) {
@@ -60,4 +61,18 @@ dynamic showChoiceDialog(BuildContext context, String title, String description,
       );
     },
   );
+}
+
+void showStatusMessage(BuildContext context, String title, String description){
+  Flushbar(
+    title: title,
+    message: description,
+    duration:  Duration(seconds: 5),              
+    icon: Icon(
+      Icons.info_outline,
+      size: 28.0,
+      color: Colors.blue[300],
+    ),
+    leftBarIndicatorColor: Colors.blue[300],
+  )..show(context);
 }
