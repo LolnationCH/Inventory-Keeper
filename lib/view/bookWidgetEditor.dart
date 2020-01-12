@@ -43,7 +43,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
   List<Widget> getGenericInfo() => [
     Align(
       alignment: Alignment.centerLeft,
-      child:TextField(controller: titleController),
+      child: TextField(controller: titleController),
     ),
     Align(
       alignment: Alignment.centerLeft,
@@ -95,10 +95,11 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     imageUrl: widget.bookInfo.thumbnail,
     placeholder: (context, url) => CircularProgressIndicator(),
     errorWidget: (context, url, error) => Icon(Icons.error),
+    fit: BoxFit.contain
   );
 
   AppBar getAppBar() => AppBar(
-    title: Text(widget.bookInfo.title)
+    title: Text("Edit : " + widget.bookInfo.title)
   );
 
   Book getBookEdited() {
@@ -122,7 +123,34 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     color: Colors.green,
     textColor: Colors.white,
     onPressed: () {
-      Navigator.of(context).pop(getBookEdited());
+      Book bookEdited = getBookEdited();
+      if (bookEdited.title.isNotEmpty && bookEdited.getIdentifier().isNotEmpty)
+        Navigator.of(context).pop(bookEdited);
+      else
+      {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: new Text("Missing fields"),
+              content: new Text("You must provide a value for the title and the ISBN"),
+              actions: <Widget>[
+                new FlatButton(
+                  color: Colors.green,
+                  textColor: Colors.white,
+                  disabledColor: Colors.grey,
+                  disabledTextColor: Colors.black,
+                  padding: EdgeInsets.all(8.0),
+                  child: new Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     },
   );
   

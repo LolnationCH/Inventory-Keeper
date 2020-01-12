@@ -38,9 +38,9 @@ class Book{
   String publisher;
   String publishedDate;
   String description;
-  ISBN identifier = new ISBN('0');
+  ISBN identifier = new ISBN('');
   int pageCount;
-  String thumbnail = 'https://i.imgur.com/2ilT3Q5.png'; // Default to a no Image
+  String thumbnail = 'https://i.imgur.com/QWa1CA7.png'; // Default to a no Image
   String language;
 
   String getIdentifier() { return this.identifier.identifier; }
@@ -53,7 +53,18 @@ class Book{
   void setVolumeNumber(String volumeNumber) { this.volumeNumber = int.tryParse(volumeNumber); }
   void setPageCount(String pageCount) { this.pageCount = int.tryParse(pageCount); }
 
-  Book();
+  Book() {
+    title = '';
+    volumeNumber = 0;
+    authors = [''];
+    publisher = '';
+    publishedDate = '';
+    description = '';
+    identifier = new ISBN('');
+    pageCount = 0;
+    thumbnail = 'https://i.imgur.com/QWa1CA7.png'; // Default to a no Image
+    language = 'EN';
+  }
 
   Book.fromJsonWeb(Map<String, dynamic> jsonItem) {
     dynamic volumeInfo = jsonItem["volumeInfo"];

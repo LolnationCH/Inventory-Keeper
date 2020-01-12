@@ -57,15 +57,16 @@ class _BookWidget extends State<BookWidget>
   ];
 
   List<Widget> getImportantInfo() => [
+    Text(''),
     Text(bookShown.title, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
     Text(''),
-    Text(bookShown.description, style: TextStyle(fontSize: 20))
   ];
 
   CachedNetworkImage getBookImage() => CachedNetworkImage(
     imageUrl: bookShown.thumbnail,
     placeholder: (context, url) => CircularProgressIndicator(),
     errorWidget: (context, url, error) => Icon(Icons.error),
+    fit: BoxFit.contain
   );
 
   AppBar getAppBar(BuildContext context) => AppBar(
@@ -79,26 +80,29 @@ class _BookWidget extends State<BookWidget>
             context,
             MaterialPageRoute(builder: (context) => BookWidgetEditor(bookInfo: bookShown)),
           ).then((result) {
-            JsonStorage storage = new JsonStorage();
-            List<Book> _books = new List<Book>();
-            Book editedBook = result;
-            storage.readBooks().then((books) {
-              if (books != null && books.length != 0)
-              {
-                _books = new List<Book>();
-                for (int i = 0; i< books.length; i++)
-                  _books.add(Book.fromJson(books[i]));
+            if (result != null)
+            {
+              JsonStorage storage = new JsonStorage();
+              List<Book> _books = new List<Book>();
+              Book editedBook = result;
+              storage.readBooks().then((books) {
+                if (books != null && books.length != 0)
+                {
+                  _books = new List<Book>();
+                  for (int i = 0; i< books.length; i++)
+                    _books.add(Book.fromJson(books[i]));
 
-                int index = _books.indexWhere((book) => book.getIdentifier() == widget.bookInfo.getIdentifier());
-                if (index != -1)
-                  _books.removeAt(index);
+                  int index = _books.indexWhere((book) => book.getIdentifier() == widget.bookInfo.getIdentifier());
+                  if (index != -1)
+                    _books.removeAt(index);
 
-                _books.add(editedBook);
+                  _books.add(editedBook);
 
-                storage.writeBooks(_books);
-              }
-            });
-            bookShown = editedBook;
+                  storage.writeBooks(_books);
+                }
+              });
+              bookShown = editedBook;
+            }
           });
         }
       ),
@@ -112,12 +116,21 @@ class _BookWidget extends State<BookWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          getBookImage(),
+          Expanded(
+            child:getBookImage(),
+          ),
           Flexible(
             child: ListView(
               children: <Widget>[
                 Column(children: getImportantInfo())
-              ] + getGenericInfo()
+              ] + getGenericInfo() + 
+              [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('\nDescription :', style: TextStyle(fontSize: 25))
+                  ),
+                  Text(bookShown.description, style: TextStyle(fontSize: 20))
+                ]
           ))
         ],
       )
@@ -135,7 +148,9 @@ class _BookWidget extends State<BookWidget>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children:<Widget>[
-                  getBookImage(),
+                  Expanded(
+                    child:getBookImage(),
+                  ),
                   Expanded(
                     child:Container(
                       child:Column( children: getImportantInfo())
@@ -144,7 +159,14 @@ class _BookWidget extends State<BookWidget>
                 ]
               ),
               Column(
-                children: getGenericInfo()
+                children: getGenericInfo() + 
+                [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('\nDescription :', style: TextStyle(fontSize: 25))
+                  ),
+                  Text(bookShown.description, style: TextStyle(fontSize: 20))
+                ]
               )
             ]
           )

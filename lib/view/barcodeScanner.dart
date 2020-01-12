@@ -70,7 +70,7 @@ class _BardcodeScanner extends State<BardcodeScanner>{
 
   void _confirmAddition(String code, Map<String, dynamic> response) {
     dynamic items = response['items'];
-    if (items.length == 0)
+    if (items == null || items.length == 0)
     {
       _noBookFound(code);
       return;
