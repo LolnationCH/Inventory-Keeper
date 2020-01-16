@@ -16,6 +16,9 @@ class BookWidgetEditor extends StatefulWidget {
 
 class _BookWidgetEditor extends State<BookWidgetEditor>
 {
+  TextEditingController thumbnailController;
+  String previousUrl;
+
   TextEditingController titleController;
   TextEditingController descriptionController;
   TextEditingController authorController;
@@ -30,6 +33,8 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
   @override
   void initState() {
     super.initState();
+    thumbnailController = TextEditingController(text: widget.bookInfo.thumbnail);
+    previousUrl = widget.bookInfo.thumbnail;
     titleController = TextEditingController(text: widget.bookInfo.title);
     descriptionController = TextEditingController(text: widget.bookInfo.description);
     authorController = TextEditingController(text: widget.bookInfo.getAuthors());
@@ -39,7 +44,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     pageCountController = TextEditingController(text: widget.bookInfo.getPageCount());
     languageController = TextEditingController(text: widget.bookInfo.language);
     isbnController = TextEditingController(text: widget.bookInfo.getIdentifier());
-    typeController = TextEditingController(text: widget.bookInfo.bookType);
+    typeController = TextEditingController(text: widget.bookInfo.bookType);   
   }
 
   List<Widget> getGenericInfo() => [
@@ -102,8 +107,47 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     ),
   ];
 
+  FlatButton getBookImageButton() => FlatButton(
+    child: getBookImage(),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Thumbnail url'),
+            content: TextField(
+              controller: thumbnailController,
+              decoration: InputDecoration(hintText: "Thumbnail url"),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                color: Colors.green,
+                child: new Text('Save'),
+                onPressed: () {
+                  setState(() {
+                    previousUrl = thumbnailController.text;  
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                color: Colors.red,
+                child: new Text('Cancel'),
+                onPressed: () {
+                  setState(() {
+                    thumbnailController.text = previousUrl;
+                  });
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+    },
+  );
+
   CachedNetworkImage getBookImage() => CachedNetworkImage(
-    imageUrl: widget.bookInfo.thumbnail,
+    imageUrl: thumbnailController.text,
     placeholder: (context, url) => CircularProgressIndicator(),
     errorWidget: (context, url, error) => Icon(Icons.error),
     fit: BoxFit.contain
@@ -117,6 +161,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     Book bookEdited = Book.fromJson(widget.bookInfo.toJson());
 
     bookEdited.title = titleController.text;
+    bookEdited.thumbnail = thumbnailController.text;
     bookEdited.description = descriptionController.text;
     bookEdited.setAuthors(authorController.text);
     bookEdited.setVolumeNumber(volumeController.text);
@@ -152,7 +197,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          getBookImage(),
+          getBookImageButton(),
           Flexible(
             child: ListView(
               children: <Widget>[
@@ -188,7 +233,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children:<Widget>[
-                  getBookImage()
+                  getBookImageButton()
                 ],
               ),
               Column(
