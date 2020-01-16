@@ -61,12 +61,47 @@ class CatalogSearch extends SearchDelegate<String> {
     );
   }
 
+  Pattern matchingPattern(String query) => RegExp(query, caseSensitive: false);
+
+  TextSpan getSuggestionTextSpan(String query, String suggestionTitle) {
+    int index = suggestionTitle.indexOf(matchingPattern(query));
+    if (index == 0) {
+      return TextSpan(
+        text: suggestionTitle.substring(0, query.length), 
+        style: TextStyle(
+          color: Colors.orange, fontWeight: FontWeight.bold
+        ),
+        children: [
+          TextSpan(
+              text: suggestionTitle.substring(query.length),
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.normal)),
+        ],
+      );
+    }
+    else {
+      return TextSpan(
+        text: suggestionTitle.substring(0, index), 
+        style: TextStyle( color: Colors.grey ),
+        children: [
+          TextSpan(
+              text: suggestionTitle.substring(index, index + query.length),
+              style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)
+          ),
+          TextSpan(
+              text: suggestionTitle.substring(query.length + index),
+              style: TextStyle(color: Colors.grey)
+          ),
+        ],
+      );
+    }
+  }
+
   @override
   Widget buildSuggestions(BuildContext context) {
     // show when someone searches for something
     final suggestionList = query.isEmpty
         ? _books
-        : _books.where((p) => p.title.contains(RegExp(query, caseSensitive: false))).toList();
+        : _books.where((p) => p.title.contains(matchingPattern(query))).toList();
 
 
     return ListView.builder(itemBuilder: (context, index) => ListTile(
@@ -80,15 +115,7 @@ class CatalogSearch extends SearchDelegate<String> {
       },
       trailing: Icon(Icons.remove_red_eye),
       title: RichText(
-        text: TextSpan(
-            text: suggestionList[index].title.substring(0, query.length),
-            style: TextStyle(
-                color: Colors.orange, fontWeight: FontWeight.bold),
-            children: [
-              TextSpan(
-                  text: suggestionList[index].title.substring(query.length),
-                  style: TextStyle(color: Colors.grey)),
-            ]),
+        text: getSuggestionTextSpan(query, suggestionList[index].title)
       ),
     ),
       itemCount: suggestionList.length,
