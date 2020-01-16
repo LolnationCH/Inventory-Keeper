@@ -170,7 +170,7 @@ class Book{
     'pageCount':     pageCount,
     'thumbnail':     thumbnail,
     'language':      language,
-    'bookType':          bookType,
+    'bookType':      bookType,
   };
 }
 

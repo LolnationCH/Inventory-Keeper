@@ -19,9 +19,14 @@ class _CatalogWidget extends State<CatalogWidget>
   List<Book> _books;
   List<BookContainer> _booksContainer;
 
-  bool sortTitleAsc = true;
-  bool sortLangAsc = true;
-  bool sortTypeAsc = true;
+  Map<String, bool> sortAscMap = {
+    "title" : false,
+    "language" : false,
+    "bookType" : false
+  };
+  String lastHit = "title";
+
+  bool allFalseSort() => sortAscMap.values.where((val) => val == true).length == 0;
 
   void sortBookByPropsAsc(String props){
     _books.sort((a, b) => a.toJson()[props].compareTo(b.toJson()[props]));
@@ -40,30 +45,15 @@ class _CatalogWidget extends State<CatalogWidget>
       sortBookByPropsAsc(props);
   }
 
-  void hitSortByTitle() {
-    _sortByProps(sortTitleAsc, "title");
-    sortTitleAsc = !sortTitleAsc;
-  }
-
-  void hitSortByLang() {
-    _sortByProps(sortTitleAsc, "language");
-    sortLangAsc = !sortLangAsc;
-  }
-
-  void hitSortByType() {
-    _sortByProps(sortTypeAsc, "bookType");
-    sortTypeAsc = !sortTypeAsc;
-  }
-
   void setupBooksContainer(){
     _booksContainer = new List<BookContainer>();
     if (_books == null) return;
     for (int i = 0; i < _books.length; i++)
       _booksContainer.add(new BookContainer(info : _books[i], refreshFunc: (){
         initBooks();
-        _sortByProps(sortTitleAsc, "title");
-        _sortByProps(sortLangAsc, "language");
-        _sortByProps(sortTypeAsc, "bookType");
+        _sortByProps(sortAscMap['title']   , "title");
+        _sortByProps(sortAscMap['language'], "language");
+        _sortByProps(sortAscMap['bookType'], "bookType");
       }));
 
     setState(() {
@@ -141,26 +131,33 @@ class _CatalogWidget extends State<CatalogWidget>
     return AppBar(
       title: Text(title + " (${_booksContainer.length})"),
       actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.refresh),
-          tooltip: 'Refresh the book shown',
-          onPressed: initBooks,
+        DropdownButton<String>(
+          value: allFalseSort() ? "title" : lastHit,
+          onChanged: (String selectedValue) {
+            setState(() {
+              sortAscMap[selectedValue] = !sortAscMap[selectedValue];
+              lastHit = selectedValue;
+              _sortByProps(sortAscMap[selectedValue], selectedValue);
+            });
+          },
+          items: sortAscMap.keys.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(
+                    Icons.check,
+                    color: sortAscMap[value] ? null : Colors.transparent,
+                  ),
+                  SizedBox(width: 16),
+                  Text(value),
+                ],
+              ),
+            );
+            })
+            .toList(),
         ),
-        IconButton(
-          icon: Icon(Icons.sort),
-          tooltip: 'Sort by title',
-          onPressed: hitSortByTitle
-        ),
-        IconButton(
-          icon: Icon(Icons.sort_by_alpha),
-          tooltip: 'Sort by language',
-          onPressed: hitSortByLang
-        ),
-        IconButton(
-          icon: Icon(Icons.sort),
-          tooltip: 'Sort by type',
-          onPressed: hitSortByType
-        )
       ],
     );
   }
