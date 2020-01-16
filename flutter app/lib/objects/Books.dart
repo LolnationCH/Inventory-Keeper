@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:uuid/uuid.dart';
 
 const Map<int, String> ISBN_type = {
   10 : "ISBN_10",
@@ -34,6 +35,7 @@ class ISBN{
 }
 
 class Book{
+  Uuid id;
   String title;
   int volumeNumber;
   List<String> authors;
@@ -56,6 +58,7 @@ class Book{
   void setPageCount(String pageCount) { this.pageCount = int.tryParse(pageCount); }
 
   Book() {
+    id = Uuid();
     title = '';
     volumeNumber = 0;
     authors = [''];
@@ -78,6 +81,7 @@ class Book{
         identifier = new ISBN(industryIdentifiers[j]["identifier"]);
     }
 
+    id = Uuid();
     title         = volumeInfo["title"];
     volumeNumber  = volumeInfo['volumeNumber'];
     authors       = new List<String>.from(volumeInfo["authors"]);
@@ -108,6 +112,7 @@ class Book{
     if (book != null)
     {
       dynamic volumeInfo = book["volumeInfo"];
+      id = Uuid();
       title         = volumeInfo["title"];
       volumeNumber  = volumeInfo['volumeNumber'];
       authors       = new List<String>.from(volumeInfo["authors"]);
@@ -121,6 +126,7 @@ class Book{
   }
 
   Book.fromJson(Map<String, dynamic> json) : 
+    id = json['id'],
     title = json['title'],
     volumeNumber = json['volumeNumber'],
     authors = new List<String>.from(json['authors']),
@@ -133,6 +139,7 @@ class Book{
     language = json['language'];
 
   Map<String, dynamic> toJson() => {
+    'id':            id,
     'title':         title,
     'volumeNumber':  volumeNumber,
     'authors':       authors,

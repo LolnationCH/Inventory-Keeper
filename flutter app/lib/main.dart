@@ -216,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
         for (int i = 0; i< books.length; i++)
           _books.add(Book.fromJson(books[i]));
 
-        int index = _books.indexWhere((book) => book.getIdentifier() == enteredBook.getIdentifier());
+        int index = _books.indexWhere((book) => book.id == enteredBook.id);
         if (index == -1)
         {
           _books.add(enteredBook);

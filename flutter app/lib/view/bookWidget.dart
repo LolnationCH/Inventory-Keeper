@@ -93,7 +93,7 @@ class _BookWidget extends State<BookWidget>
                   for (int i = 0; i< books.length; i++)
                     _books.add(Book.fromJson(books[i]));
 
-                  int index = _books.indexWhere((book) => book.getIdentifier() == widget.bookInfo.getIdentifier());
+                  int index = _books.indexWhere((book) => book.id == widget.bookInfo.id);
                   if (index != -1)
                     _books.removeAt(index);
 
