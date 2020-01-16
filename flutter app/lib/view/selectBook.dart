@@ -18,7 +18,7 @@ class _BookSelector extends State<BookSelector> {
   {
     Column row = new Column(
       children: <Widget>[
-        BookContainer(info : book),
+        BookContainer(info : book, refreshFunc: (){},),
         Text(book.title),
         FlatButton(
           color: Colors.blue,
