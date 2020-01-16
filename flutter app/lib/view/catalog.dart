@@ -59,7 +59,12 @@ class _CatalogWidget extends State<CatalogWidget>
     _booksContainer = new List<BookContainer>();
     if (_books == null) return;
     for (int i = 0; i < _books.length; i++)
-      _booksContainer.add(new BookContainer(info : _books[i]));
+      _booksContainer.add(new BookContainer(info : _books[i], refreshFunc: (){
+        initBooks();
+        _sortByProps(sortTitleAsc, "title");
+        _sortByProps(sortLangAsc, "language");
+        _sortByProps(sortTypeAsc, "bookType");
+      }));
 
     setState(() {
       _booksContainer  =_booksContainer;
@@ -144,23 +149,17 @@ class _CatalogWidget extends State<CatalogWidget>
         IconButton(
           icon: Icon(Icons.sort),
           tooltip: 'Sort by title',
-          onPressed: () {
-            hitSortByTitle();
-          }
+          onPressed: hitSortByTitle
         ),
         IconButton(
           icon: Icon(Icons.sort_by_alpha),
           tooltip: 'Sort by language',
-          onPressed: () {
-            hitSortByLang();
-          }
+          onPressed: hitSortByLang
         ),
         IconButton(
           icon: Icon(Icons.sort),
           tooltip: 'Sort by type',
-          onPressed: () {
-            hitSortByType();
-          }
+          onPressed: hitSortByType
         )
       ],
     );

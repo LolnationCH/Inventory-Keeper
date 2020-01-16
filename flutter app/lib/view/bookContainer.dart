@@ -5,8 +5,9 @@ import '../objects/Books.dart';
 import 'bookWidget.dart';
 
 class BookContainer extends StatelessWidget{
-  BookContainer({@required this.info});
+  BookContainer({@required this.info, @required this.refreshFunc} );
   final Book info;
+  final Function refreshFunc;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,9 @@ class BookContainer extends StatelessWidget{
           errorWidget: (context, url, error) => Icon(Icons.error),
         ),
         onPressed: () =>
-          Navigator.push(context, MaterialPageRoute(builder: (context) => BookWidget(bookInfo: info)))
+          Navigator.push(context, MaterialPageRoute(builder: (context) => BookWidget(bookInfo: info))).then( (res) {
+            refreshFunc();
+          })
     );
   }
 
