@@ -25,6 +25,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
   TextEditingController pageCountController;
   TextEditingController languageController;
   TextEditingController isbnController;
+  TextEditingController typeController;
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     pageCountController = TextEditingController(text: widget.bookInfo.getPageCount());
     languageController = TextEditingController(text: widget.bookInfo.language);
     isbnController = TextEditingController(text: widget.bookInfo.getIdentifier());
+    typeController = TextEditingController(text: widget.bookInfo.bookType);
   }
 
   List<Widget> getGenericInfo() => [
@@ -94,6 +96,10 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
         ]
       )
     ),
+    Align(
+      alignment: Alignment.centerLeft,
+      child: TextField(decoration: InputDecoration(labelText: 'Type'), controller: typeController)
+    ),
   ];
 
   CachedNetworkImage getBookImage() => CachedNetworkImage(
@@ -119,6 +125,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
     bookEdited.setPageCount(pageCountController.text);
     bookEdited.language = languageController.text;
     bookEdited.setIdentifier(isbnController.text);
+    bookEdited.bookType = typeController.text;
     
     return bookEdited;
   }

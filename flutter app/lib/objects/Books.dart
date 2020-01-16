@@ -46,11 +46,13 @@ class Book{
   int pageCount;
   String thumbnail = 'https://i.imgur.com/QWa1CA7.png'; // Default to a no Image
   String language;
+  String bookType = '';
 
   String getIdentifier() { return this.identifier.identifier; }
   String getAuthors() { return this.authors.toString().replaceAll('[', '').replaceAll(']', ''); }
-  String getVolumeNumber() { return this.volumeNumber == null ? '-1' : this.volumeNumber.toString(); }
-  String getPageCount() { return this.pageCount == null ? '-1' : this.pageCount.toString(); }
+  String getVolumeNumber() { return this.volumeNumber == null ? '' : this.volumeNumber.toString(); }
+  String getPageCount() { return this.pageCount == null ? '' : this.pageCount.toString(); }
+  String getBookType() { return this.bookType == '' ? 'Not defined' : this.bookType; }
 
   void setIdentifier(String identifier) { this.identifier.identifier = identifier; }
   void setAuthors(String authors) { this.authors = authors.split(','); }
@@ -69,6 +71,7 @@ class Book{
     pageCount = 0;
     thumbnail = 'https://i.imgur.com/QWa1CA7.png'; // Default to a no Image
     language = 'EN';
+    bookType = '';
   }
 
   Book.fromJsonWeb(Map<String, dynamic> jsonItem) {
@@ -152,7 +155,8 @@ class Book{
     identifier = ISBN.fromJson(json['identifier']),
     pageCount = json['pageCount'],
     thumbnail = json['thumbnail'],
-    language = json['language'];
+    language = json['language'],
+    bookType = json['bookType'];
 
   Map<String, dynamic> toJson() => {
     'id':            id,
@@ -166,6 +170,7 @@ class Book{
     'pageCount':     pageCount,
     'thumbnail':     thumbnail,
     'language':      language,
+    'bookType':          bookType,
   };
 }
 

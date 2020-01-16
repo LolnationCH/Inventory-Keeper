@@ -21,6 +21,7 @@ class _CatalogWidget extends State<CatalogWidget>
 
   bool sortTitleAsc = true;
   bool sortLangAsc = true;
+  bool sortTypeAsc = true;
 
   void sortBookByPropsAsc(String props){
     _books.sort((a, b) => a.toJson()[props].compareTo(b.toJson()[props]));
@@ -39,14 +40,19 @@ class _CatalogWidget extends State<CatalogWidget>
       sortBookByPropsAsc(props);
   }
 
-  void hitSortByTitle(){
+  void hitSortByTitle() {
     _sortByProps(sortTitleAsc, "title");
     sortTitleAsc = !sortTitleAsc;
   }
 
-  void hitSortByLang(){
+  void hitSortByLang() {
     _sortByProps(sortTitleAsc, "language");
     sortLangAsc = !sortLangAsc;
+  }
+
+  void hitSortByType() {
+    _sortByProps(sortTypeAsc, "bookType");
+    sortTypeAsc = !sortTypeAsc;
   }
 
   void setupBooksContainer(){
@@ -147,6 +153,13 @@ class _CatalogWidget extends State<CatalogWidget>
           tooltip: 'Sort by language',
           onPressed: () {
             hitSortByLang();
+          }
+        ),
+        IconButton(
+          icon: Icon(Icons.sort),
+          tooltip: 'Sort by type',
+          onPressed: () {
+            hitSortByType();
           }
         )
       ],

@@ -24,6 +24,7 @@ Future<dynamic> sendBookData(dynamic books) async {
       headers: {HttpHeaders.contentTypeHeader : "application/json"},
       body: json.encode(books)
     );
+    res = response;
   } on SocketException {
     return null;
   }

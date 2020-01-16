@@ -55,6 +55,10 @@ class _BookWidget extends State<BookWidget>
       alignment: Alignment.centerLeft,
       child: Text('ISBN : ' + bookShown.identifier.getIdentifierVisual(), style: TextStyle(fontSize: 25))
     ),
+    Align(
+      alignment: Alignment.centerLeft,
+      child: Text('Type : ' + bookShown.getBookType(), style: TextStyle(fontSize: 25))
+    ),
   ];
 
   List<Widget> getImportantInfo() => [
