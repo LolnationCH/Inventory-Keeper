@@ -94,9 +94,11 @@ class _MyHomePageState extends State<MyHomePage> {
           showChoiceDialog(context, "Sync with server", "Upload or download from server?",
           () {
             _uploadWithServer(context);
+            Navigator.of(context).pop();
           },
           (){
             _downloadWithServer(context);
+            Navigator.of(context).pop();
           },
           yesButtonLabel: "Upload",
           noButtonLabel:  "Download");
