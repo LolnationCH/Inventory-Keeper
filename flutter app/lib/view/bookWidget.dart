@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:inventory_keeper/queries/SaveFile.dart';
 
+import '../dialogs.dart';
 import '../objects/Books.dart';
 
 import 'bookWidgetEditor.dart';
@@ -106,6 +107,35 @@ class _BookWidget extends State<BookWidget>
           });
         }
       ),
+      IconButton(
+        icon: Icon(Icons.delete_forever),
+        tooltip: 'Delete book',
+        onPressed: () {
+          showChoiceDialog(context, "Delete book?",  "Are you sure you want to permantly delete this book?",
+          (){
+              JsonStorage storage = new JsonStorage();
+              List<Book> _books = new List<Book>();
+              storage.readBooks().then((books) {
+                if (books != null && books.length != 0)
+                {
+                  _books = new List<Book>();
+                  for (int i = 0; i< books.length; i++)
+                    _books.add(Book.fromJson(books[i]));
+
+                  int index = _books.indexWhere((book) => book.getIdentifier() == bookShown.getIdentifier());
+                  if (index != -1)
+                    _books.removeAt(index);
+                  
+                  storage.writeBooks(_books);
+                }
+                Navigator.of(context).pop();
+              });
+          },
+          (){
+            Navigator.of(context).pop();
+          });
+        },
+      )
     ],
   );
   

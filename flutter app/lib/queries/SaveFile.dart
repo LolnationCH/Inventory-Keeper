@@ -41,7 +41,7 @@ class JsonStorage {
   }
 
   Future<File> writeBooks(List<Book> books) async {
-    if (books == null || books.length == 0) return null;
+    if (books == null) return null;
     final file = await _dataFile;
 
     // Write the file
