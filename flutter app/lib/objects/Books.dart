@@ -82,15 +82,23 @@ class Book{
     }
 
     id = Uuid();
-    title         = volumeInfo["title"];
-    volumeNumber  = volumeInfo['volumeNumber'];
-    authors       = new List<String>.from(volumeInfo["authors"]);
-    publisher     = volumeInfo["publisher"];
-    publishedDate = volumeInfo["publishedDate"];
-    description   = volumeInfo["description"];
-    pageCount     = volumeInfo["pageCount"];
-    thumbnail     = volumeInfo["imageLinks"]["thumbnail"];
-    language      = volumeInfo["language"];
+    title           = volumeInfo["title"];
+    if (volumeInfo["volumeNumber"] != null)
+      volumeNumber  = volumeInfo['volumeNumber'];
+    if (volumeInfo["authors"] != null)
+      authors       = new List<String>.from(volumeInfo["authors"]);
+    if (volumeInfo["publisher"] != null)
+      publisher     = volumeInfo["publisher"];
+    if (volumeInfo["publishedDate"] != null)
+      publishedDate = volumeInfo["publishedDate"];
+    if (volumeInfo["description"] != null)
+      description   = volumeInfo["description"];
+    if (volumeInfo["pageCount"] != null)
+      pageCount     = volumeInfo["pageCount"];
+    if (volumeInfo["imageLinks"] != null)
+      thumbnail     = volumeInfo["imageLinks"]["thumbnail"];
+    if (volumeInfo["language"] != null)
+      language      = volumeInfo["language"];
   }
 
   Book.fromRawJsonWeb(String isbn, Map<String, dynamic> jsonResponse) {
@@ -113,15 +121,23 @@ class Book{
     {
       dynamic volumeInfo = book["volumeInfo"];
       id = Uuid();
-      title         = volumeInfo["title"];
-      volumeNumber  = volumeInfo['volumeNumber'];
-      authors       = new List<String>.from(volumeInfo["authors"]);
-      publisher     = volumeInfo["publisher"];
-      publishedDate = volumeInfo["publishedDate"];
-      description   = volumeInfo["description"];
-      pageCount     = volumeInfo["pageCount"];
-      thumbnail     = volumeInfo["imageLinks"]["thumbnail"];
-      language      = volumeInfo["language"];
+      title           = volumeInfo["title"];
+      if (volumeInfo["volumeNumber"] != null)
+        volumeNumber  = volumeInfo['volumeNumber'];
+      if (volumeInfo["authors"] != null)
+        authors       = new List<String>.from(volumeInfo["authors"]);
+      if (volumeInfo["publisher"] != null)
+        publisher     = volumeInfo["publisher"];
+      if (volumeInfo["publishedDate"] != null)
+        publishedDate = volumeInfo["publishedDate"];
+      if (volumeInfo["description"] != null)
+        description   = volumeInfo["description"];
+      if (volumeInfo["pageCount"] != null)
+        pageCount     = volumeInfo["pageCount"];
+      if (volumeInfo["imageLinks"] != null)
+        thumbnail     = volumeInfo["imageLinks"]["thumbnail"];
+      if (volumeInfo["language"] != null)
+        language      = volumeInfo["language"];
     }
   }
 
