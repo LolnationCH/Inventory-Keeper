@@ -111,10 +111,14 @@ class _MyHomePageState extends State<MyHomePage> {
       DrawerHeader(
         child: Align(
           alignment: Alignment.center,
-          child: Text('Inventory Keeper'),
+          child: Text(''),
         ),
         decoration: BoxDecoration(
           color: Colors.purple[400],
+          image: DecorationImage(
+            image: AssetImage("assets/header.png"),
+            fit: BoxFit.cover
+          )
         ),
       ),
       ListTile(
