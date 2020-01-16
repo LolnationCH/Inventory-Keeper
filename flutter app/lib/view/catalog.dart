@@ -32,26 +32,21 @@ class _CatalogWidget extends State<CatalogWidget>
     setupBooksContainer();
   }
 
+  void _sortByProps(bool condition, String props) {
+    if (condition)
+      sortBookByPropsDsc(props);
+    else
+      sortBookByPropsAsc(props);
+  }
+
   void hitSortByTitle(){
-    if (sortTitleAsc){
-      sortTitleAsc = false;
-      sortBookByPropsDsc("title");
-    }
-    else{
-      sortTitleAsc = true;
-      sortBookByPropsAsc("title");
-    }
+    _sortByProps(sortTitleAsc, "title");
+    sortTitleAsc = !sortTitleAsc;
   }
 
   void hitSortByLang(){
-    if (sortLangAsc){
-      sortLangAsc = false;
-      sortBookByPropsDsc("language");
-    }
-    else{
-      sortLangAsc = true;
-      sortBookByPropsAsc("language");
-    }
+    _sortByProps(sortTitleAsc, "language");
+    sortLangAsc = !sortLangAsc;
   }
 
   void setupBooksContainer(){
@@ -136,6 +131,11 @@ class _CatalogWidget extends State<CatalogWidget>
       title: Text(title + " (${_booksContainer.length})"),
       actions: <Widget>[
         IconButton(
+          icon: Icon(Icons.refresh),
+          tooltip: 'Refresh the book shown',
+          onPressed: initBooks,
+        ),
+        IconButton(
           icon: Icon(Icons.sort),
           tooltip: 'Sort by title',
           onPressed: () {
@@ -155,7 +155,6 @@ class _CatalogWidget extends State<CatalogWidget>
 
   @override
   Widget build(BuildContext context) {
-    initBooks();
     if (_booksContainer == null || _booksContainer.length == 0)
       return createDefaultScaffold();
     else

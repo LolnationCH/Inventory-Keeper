@@ -35,7 +35,7 @@ class ISBN{
 }
 
 class Book{
-  Uuid id;
+  String id;
   String title;
   int volumeNumber;
   List<String> authors;
@@ -58,7 +58,7 @@ class Book{
   void setPageCount(String pageCount) { this.pageCount = int.tryParse(pageCount); }
 
   Book() {
-    id = Uuid();
+    id = Uuid().v4();
     title = '';
     volumeNumber = 0;
     authors = [''];
@@ -81,7 +81,7 @@ class Book{
         identifier = new ISBN(industryIdentifiers[j]["identifier"]);
     }
 
-    id = Uuid();
+    id = Uuid().v4();
     title           = volumeInfo["title"];
     if (volumeInfo["volumeNumber"] != null)
       volumeNumber  = volumeInfo['volumeNumber'];
@@ -120,7 +120,7 @@ class Book{
     if (book != null)
     {
       dynamic volumeInfo = book["volumeInfo"];
-      id = Uuid();
+      id = Uuid().v4();
       title           = volumeInfo["title"];
       if (volumeInfo["volumeNumber"] != null)
         volumeNumber  = volumeInfo['volumeNumber'];

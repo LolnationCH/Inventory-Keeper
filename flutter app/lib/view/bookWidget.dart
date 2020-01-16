@@ -129,6 +129,7 @@ class _BookWidget extends State<BookWidget>
                   storage.writeBooks(_books);
                 }
                 Navigator.of(context).pop();
+                Navigator.of(context).pop();
               });
           },
           (){
