@@ -2,7 +2,7 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
-dynamic showBasicDialog(BuildContext context, String title, String description) {
+dynamic showBasicDialog(BuildContext context, String title, String description, { Function onOkPressed }) {
   return showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -18,7 +18,10 @@ dynamic showBasicDialog(BuildContext context, String title, String description) 
             padding: EdgeInsets.all(8.0),
             child: new Text("Ok"),
             onPressed: () {
-              Navigator.of(context).pop();
+              if (onOkPressed == null)
+                Navigator.of(context).pop();
+              else
+                onOkPressed();
             },
           ),
         ],

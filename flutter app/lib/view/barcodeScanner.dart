@@ -24,6 +24,8 @@ class _BardcodeScanner extends State<BardcodeScanner>{
   Set<String> _isbnSet = new Set<String>();
   List<Book> _books;
 
+  bool hasScanned = false;
+
   void init() async {
     dynamic books = await widget.storage.readBooks();
     if (books == null || books.length == 0)
@@ -48,7 +50,12 @@ class _BardcodeScanner extends State<BardcodeScanner>{
     dynamic items = response['items'];
     if (items == null || items.length == 0)
     {
-      showBasicDialog(context, "No book found", "No book was found for the ISBN \"$code\"");
+      showBasicDialog(context, "No book found", "No book was found for the ISBN \"$code\"",
+      onOkPressed: () {
+        hasScanned = false;
+        _isbnSet.remove(code);
+        Navigator.of(context).pop();
+      });
       return;
     }
 
@@ -69,6 +76,7 @@ class _BardcodeScanner extends State<BardcodeScanner>{
             widget.storage.writeBooks(_books);
           }
         }
+        hasScanned = false;
         Navigator.of(context).pop();
       });
     }
@@ -77,10 +85,12 @@ class _BardcodeScanner extends State<BardcodeScanner>{
        () {
         _books.add(temp);
         widget.storage.writeBooks(_books);
+        hasScanned = false;
         Navigator.of(context).pop();
        },
        () {
         _isbnSet.remove(code);
+        hasScanned = false;
         Navigator.of(context).pop();
        }
       );
@@ -88,11 +98,31 @@ class _BardcodeScanner extends State<BardcodeScanner>{
   }
 
   void _scanAlert(String code) {
-    Book temp = _books[_books.indexWhere((book) => book.getIdentifier() == code)];
-    showBasicDialog(context, "Book is already in catalog", "The book \"${temp.title}\" is already in your catalog.");
+    int index = _books.indexWhere((book) => book.getIdentifier() == code);
+    if (index == -1)
+    {
+      showBasicDialog(context, "No book found", "No book was found for the ISBN \"$code\"",
+      onOkPressed: () {
+        hasScanned = false;
+        _isbnSet.remove(code);
+        Navigator.of(context).pop();
+      });
+    }
+    else
+    {
+      Book temp = _books[index];
+      showBasicDialog(context, "Book is already in catalog", "The book \"${temp.title}\" is already in your catalog.",
+        onOkPressed: () {
+          hasScanned = false;
+          Navigator.of(context).pop();
+      });
+    }
   }
 
   void _scanCode(code){
+    if (hasScanned) return;
+    hasScanned = true;
+    
     setState(() {
       _isbnScanned = getISBNRepresentation(code);
     });
