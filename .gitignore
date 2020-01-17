@@ -2,3 +2,4 @@
 .vscode/launch.json
 
 server/data.json
+desktop_client/dist/**
