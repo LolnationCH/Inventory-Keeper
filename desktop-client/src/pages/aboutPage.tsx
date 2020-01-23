@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import * as React from "react";
-import logo from '../logo.svg';
+import logo from '../icon.svg';
 
 export class AboutPage extends Component{
   render(){
@@ -8,16 +8,15 @@ export class AboutPage extends Component{
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Inventory Keeper
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <p>
+          Made by LolnationCH
+        </p>
+
+        <p>
+          Check out the mobile application!
+        </p>
       </header>
     )
   }

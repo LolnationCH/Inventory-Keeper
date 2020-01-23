@@ -11,7 +11,7 @@ export class CatalogPage extends React.Component{
       <GridList cellHeight={182} spacing={10} cols={10}>
         {Data.map( function(item){
           return (
-            <GridListTile key={item.title}>
+            <GridListTile key={item.identifier.identifier}>
               <Button component={Link} to={"/books/" + item.identifier.identifier}>
                 <img src={item.thumbnail} alt={item.title}/>
               </Button>

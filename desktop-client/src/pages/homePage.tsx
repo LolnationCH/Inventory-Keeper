@@ -2,18 +2,10 @@ import { Component } from 'react';
 import * as React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline/CssBaseline";
 
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 
-import Drawer from '@material-ui/core/Drawer';
-import Divider from '@material-ui/core/Divider';
-
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-
-import {GetListItemBooks, GetListItemData, GetListItemAbout} from '../components/drawerList';
 import { Grid } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 const buttonStyle = {width: '100%', height: '100px', color: 'white'};
 
@@ -41,51 +33,21 @@ export class HomePage extends Component<any, any>{
     return (
       <div>
         <CssBaseline/>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={this.handleDrawerOpen}
-          edge="start"
-          style={{ margin: '1px'}}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Drawer 
-          variant="persistent"
-          anchor="left"
-          open={this.state.drawerOpen}
-          >
-          <div>
-            <IconButton onClick={this.handleDrawerClose}>
-              <ChevronRightIcon/>
-            </IconButton>
-          </div>
-          <Divider />
-          <GetListItemBooks/>
-          <Divider/>
-          <Typography variant="subtitle1" noWrap>
-            Data management
-          </Typography>
-          <GetListItemData/>
-          <Divider/>
-          <Typography variant="subtitle1" noWrap>
-            App info
-          </Typography>
-          <GetListItemAbout/>
-        </Drawer>
         <div style = {{flexGrow: 1, margin: '1%'}}>
           <Grid container spacing={3}>
             <Grid item xs>
-              <Button style={IsbnAddButtonStyle} variant="contained">Add with isbn</Button>
+              <Button style={IsbnAddButtonStyle} variant="contained" component={Link} to={"/manualAdd"}>Add with isbn</Button>
             </Grid>
             <Grid item xs>
-              <Button style={CatalogButtonStyle} variant="contained">Catalog</Button>
+              <Button style={CatalogButtonStyle} variant="contained" component={Link} to={"/catalog"}>Catalog</Button>
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs>
+              <Button style={ManuelAddButtonStyle} variant="contained" component={Link} to={"/manualAdd"}>Add a book</Button>
             </Grid>
             <Grid item xs>
-              <Button style={ManuelAddButtonStyle} variant="contained">Add a book</Button>
-            </Grid>
-            <Grid item xs>
-              <Button style={ServerSyncButtonStyle} variant="contained">Sync with server</Button>
+              <Button style={ServerSyncButtonStyle} variant="contained" component={Link} to={"/server"}>Sync with server</Button>
             </Grid>
           </Grid>
         </div>

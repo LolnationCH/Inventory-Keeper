@@ -6,23 +6,44 @@ import { HomePage } from './pages/homePage';
 import { AboutPage } from './pages/aboutPage';
 import { CatalogPage } from './pages/catalogPage';
 import { BookPage } from './pages/bookPage';
+import { ManualAddPage } from './pages/manualAddPage';
+import { Grid } from '@material-ui/core';
+
+import { LeftActionBar } from './components/leftActionBar';
 
 const App: React.FC = () => {
   return (
     <div className="App">
       <Router>
-        <Switch>
-          <Route exact path="/about">
-            <AboutPage/>
-          </Route>
-          <Route exact path="/catalog">
-            <CatalogPage/>
-          </Route>
-          <Route path="/">
-            <HomePage/>
-          </Route>
-          <Route path="books/:id" component={BookPage} />
-        </Switch>
+        <Grid container spacing={3}>
+          <Grid item xs>
+            <p/>
+          </Grid>
+        </Grid>
+        <Grid container spacing={1}>
+          <Grid item xs="auto" className="Left-bar">
+            <LeftActionBar/>
+          </Grid>
+          <Grid item xs>
+            <div className="Main-Div">
+              <Switch>
+                <Route exact path="/about">
+                  <AboutPage/>
+                </Route>
+                <Route exact path="/catalog">
+                  <CatalogPage/>
+                </Route>
+                <Route exact path="/manualAdd">
+                  <ManualAddPage />
+                </Route>
+                <Route path="/">
+                  <HomePage/>
+                </Route>
+                <Route path="books/:id" component={BookPage} />
+              </Switch>
+            </div>
+          </Grid>
+        </Grid>
       </Router>
     </div>
   );
