@@ -99,7 +99,7 @@ class Book{
     if (volumeInfo["pageCount"] != null)
       pageCount     = volumeInfo["pageCount"];
     if (volumeInfo["imageLinks"] != null)
-      thumbnail     = volumeInfo["imageLinks"]["thumbnail"];
+      thumbnail     = volumeInfo["imageLinks"]["thumbnail"].replaceAll("&edge=curl", "");
     if (volumeInfo["language"] != null)
       language      = volumeInfo["language"];
   }
@@ -138,7 +138,7 @@ class Book{
       if (volumeInfo["pageCount"] != null)
         pageCount     = volumeInfo["pageCount"];
       if (volumeInfo["imageLinks"] != null)
-        thumbnail     = volumeInfo["imageLinks"]["thumbnail"];
+        thumbnail     = volumeInfo["imageLinks"]["thumbnail"].replaceAll("&edge=curl", "");
       if (volumeInfo["language"] != null)
         language      = volumeInfo["language"];
     }
