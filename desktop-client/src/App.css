@@ -44,6 +44,10 @@
 	}
 }
 
+.Big-thumbnail {
+  height: 350px;
+}
+
 .Left-bar {
   text-align: left;
 }

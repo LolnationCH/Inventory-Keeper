@@ -6,7 +6,6 @@ import { HomePage } from './pages/homePage';
 import { AboutPage } from './pages/aboutPage';
 import { CatalogPage } from './pages/catalogPage';
 import { BookPage } from './pages/bookPage';
-import { ManualAddPage } from './pages/manualAddPage';
 import { Grid } from '@material-ui/core';
 
 import { LeftActionBar } from './components/leftActionBar';
@@ -34,12 +33,13 @@ const App: React.FC = () => {
                   <CatalogPage/>
                 </Route>
                 <Route exact path="/manualAdd">
-                  <ManualAddPage />
+                  <BookPage />
                 </Route>
-                <Route path="/">
+                <Route exact path="/">
                   <HomePage/>
                 </Route>
-                <Route path="books/:id" component={BookPage} />
+                <Route path="/books/:id" component={BookPage} />
+                <Route path="/books/" component={BookPage} />
               </Switch>
             </div>
           </Grid>

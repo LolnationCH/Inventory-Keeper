@@ -7,16 +7,9 @@ export class AboutPage extends Component{
     return (
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Inventory Keeper
-        </p>
-        <p>
-          Made by LolnationCH
-        </p>
-
-        <p>
-          Check out the mobile application!
-        </p>
+        <p>Inventory Keeper</p>
+        <p>Made by LolnationCH</p>
+        <p>Check out the mobile application!</p>
       </header>
     )
   }

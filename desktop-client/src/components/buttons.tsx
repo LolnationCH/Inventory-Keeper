@@ -17,20 +17,20 @@ import { Button } from "@material-ui/core";
 // Declare drawer items info
 export const ItemsBooks = [
   {text: "Home", icon: <HomeIcon/>,       page: ""},
-  {text: "Add", icon: <AddIcon/>,       page: "manualAdd"},
-  {text: "Catalog", icon: <LibraryBooksIcon/>, page: "catalog"}
+  {text: "Add", icon: <AddIcon/>,       page: "/books"},
+  {text: "Catalog", icon: <LibraryBooksIcon/>, page: "/catalog"}
 ]
 
 const ItemsData = [
-  {text: "Server download", icon: <CloudDownloadIcon/>, page: "server"},
-  {text: "Server upload", icon: <CloudUploadIcon />,    page: "server"},
-  {text: "Export to file", icon: <PublishIcon />,       page: "local"},
-  {text: "Import from file", icon: <GetAppIcon/>,       page: "local"},
-  {text: "Delete", icon: <DeleteForeverIcon />,         page: "deleteEverything"}
+  {text: "Server download", icon: <CloudDownloadIcon/>, page: "/server"},
+  {text: "Server upload", icon: <CloudUploadIcon />,    page: "/server"},
+  {text: "Export to file", icon: <PublishIcon />,       page: "/local"},
+  {text: "Import from file", icon: <GetAppIcon/>,       page: "/local"},
+  {text: "Delete", icon: <DeleteForeverIcon />,         page: "/deleteEverything"}
 ]
 
 const ItemsAbout = [
-  {text: "About", icon: <InfoIcon/>,       page: "about"}
+  {text: "About", icon: <InfoIcon/>,       page: "/about"}
 ]
 
 function GetLinkComponent(page: String, ref:any, props: any ){
