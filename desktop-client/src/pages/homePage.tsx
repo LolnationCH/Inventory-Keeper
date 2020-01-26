@@ -36,7 +36,7 @@ export class HomePage extends Component<any, any>{
         <div style = {{flexGrow: 1, margin: '1%'}}>
           <Grid container spacing={3}>
             <Grid item xs>
-              <Button style={IsbnAddButtonStyle} variant="contained" component={Link} to={"/manualAdd"}>Add with isbn</Button>
+              <Button style={IsbnAddButtonStyle} variant="contained" component={Link} to={"/books"}>Add with isbn</Button>
             </Grid>
             <Grid item xs>
               <Button style={CatalogButtonStyle} variant="contained" component={Link} to={"/catalog"}>Catalog</Button>

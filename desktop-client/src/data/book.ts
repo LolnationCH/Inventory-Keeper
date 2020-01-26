@@ -6,6 +6,8 @@ export class Identifier {
   }
 }
 
+export const defaultThumbnail = "https://i.imgur.com/QWa1CA7.png";
+
 export class Book {
   title:         String | undefined;
   volumeNumber:  Number | undefined;
@@ -18,8 +20,6 @@ export class Book {
   thumbnail:     String | undefined;
   language:      String | undefined;
   type:          String | undefined;
-
-  constructor(){}
 
   SetBase(title: String, volumeNumber: Number, authors: Array<String>, publisher: String, publishedDate: String,
               description: String, identifier: Identifier, pageCount: Number, thumbnail: String, language: String, type: String) {
