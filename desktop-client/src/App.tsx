@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom';
 import { Grid } from '@material-ui/core';
 import { BrowserView, MobileView} from "react-device-detect";
 
@@ -40,7 +40,7 @@ const App: React.FC = () => {
                     <HomePage/>
                   </Route>
                   <Route path="/books/:id" component={BookPage} />
-                  <Route path="/books/" component={BookPage} />
+                  <Route path="/books/" component={withRouter(BookPage)} />
                 </Switch>
               </div>
             </Grid>

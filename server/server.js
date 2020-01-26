@@ -12,5 +12,4 @@ console.log('todo list RESTful API server started on: ' + port);
 
 var bookRoute = require('./bookRoute');
 
-// Import my test routes into the path '/test'
-app.use('/books', bookRoute);
+app.use('/api/books', bookRoute);

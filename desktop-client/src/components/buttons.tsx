@@ -6,10 +6,8 @@ import { Link } from "react-router-dom";
 import HomeIcon from '@material-ui/icons/Home';
 import AddIcon from '@material-ui/icons/Add';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import PublishIcon from '@material-ui/icons/Publish';
+import SyncIcon from '@material-ui/icons/Sync';
+import ImportExportIcon from '@material-ui/icons/ImportExport';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import InfoIcon from '@material-ui/icons/Info';
 import { Button } from "@material-ui/core";
@@ -17,35 +15,28 @@ import { Button } from "@material-ui/core";
 // Declare drawer items info
 export const ItemsBooks = [
   {text: "Home", icon: <HomeIcon/>,       page: ""},
-  {text: "Add", icon: <AddIcon/>,       page: "/books"},
+  {text: "Add Book", icon: <AddIcon/>,         page: "/books"},
   {text: "Catalog", icon: <LibraryBooksIcon/>, page: "/catalog"}
 ]
 
 const ItemsData = [
-  {text: "Server download", icon: <CloudDownloadIcon/>, page: "/server"},
-  {text: "Server upload", icon: <CloudUploadIcon />,    page: "/server"},
-  {text: "Export to file", icon: <PublishIcon />,       page: "/local"},
-  {text: "Import from file", icon: <GetAppIcon/>,       page: "/local"},
-  {text: "Delete", icon: <DeleteForeverIcon />,         page: "/deleteEverything"}
+  {text: "Server Sync", icon: <SyncIcon/>,     page: "/server"},
+  {text: "Local Import/Export", icon: <ImportExportIcon />,  page: "/local"},
+  {text: "Delete Catalog", icon: <DeleteForeverIcon />,         page: "/deleteEverything"}
 ]
 
 const ItemsAbout = [
   {text: "About", icon: <InfoIcon/>,       page: "/about"}
 ]
 
-function GetLinkComponent(page: String, ref:any, props: any ){
-  return (
-    <Link to={page} {...props} />
-  );
-}
-
-export function GetIconButton(text: String, icon: JSX.Element, page: String) {
+export function GetIconButton(text: String, icon: JSX.Element, page: string) {
   return (
     <Button
       fullWidth={true}
       variant="contained"
       startIcon={icon}
-      component={props => GetLinkComponent(page, null, props)}>
+      component={Link}
+      to={page}>
       {text}
     </Button>
   )

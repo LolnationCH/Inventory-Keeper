@@ -1,28 +1,42 @@
 export class Identifier {
-  identifier: String;
+  identifier: string;
 
   constructor(){
     this.identifier = "";
   }
 }
 
-export const defaultThumbnail = "https://i.imgur.com/QWa1CA7.png";
+const defaultThumbnail = "https://i.imgur.com/QWa1CA7.png";
 
 export class Book {
-  title:         String | undefined;
+  title:         string | undefined;
   volumeNumber:  Number | undefined;
-  authors:       Array<String> | undefined;
-  publisher:     String | undefined;
-  publishedDate: String | undefined;
-  description:   String | undefined;
+  authors:       Array<string> | undefined;
+  publisher:     string | undefined;
+  publishedDate: string | undefined;
+  description:   string | undefined;
   identifier:    Identifier = new Identifier();
   pageCount:     Number | undefined;
-  thumbnail:     String | undefined;
-  language:      String | undefined;
-  type:          String | undefined;
+  thumbnail:     string | undefined;
+  language:      string | undefined;
+  type:          string | undefined;
 
-  SetBase(title: String, volumeNumber: Number, authors: Array<String>, publisher: String, publishedDate: String,
-              description: String, identifier: Identifier, pageCount: Number, thumbnail: String, language: String, type: String) {
+  constructor() {
+    this.title         = "";
+    this.volumeNumber  = 0;
+    this.authors       = [""];
+    this.publisher     = "";
+    this.publishedDate = "";
+    this.description   = "";
+    this.identifier    = new Identifier();
+    this.pageCount     = 0;
+    this.thumbnail     = defaultThumbnail;
+    this.language      = "";
+    this.type          = "";
+  }
+
+  SetBase(title: string, volumeNumber: Number, authors: Array<string>, publisher: string, publishedDate: string,
+              description: string, identifier: Identifier, pageCount: Number, thumbnail: string, language: string, type: string) {
     this.title         = title;
     this.volumeNumber  = volumeNumber;
     this.authors       = authors;
@@ -36,6 +50,6 @@ export class Book {
     this.type          = type;
   }
 
-  setIdentifier(identifier: String) { this.identifier.identifier = identifier; }
-  getIdentifier() : String { return this.identifier.identifier; }
+  setIdentifier(identifier: string) { this.identifier.identifier = identifier; }
+  getIdentifier() : string { return this.identifier.identifier; }
 }

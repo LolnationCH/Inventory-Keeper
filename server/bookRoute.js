@@ -23,7 +23,7 @@ router.post('/', (req, res) => {
     })
     .catch(err => {
       console.error(err);
-      res.status(404).send("fail to update the database");
+      res.status(404).send("Fail to update the database");
     });
 })
 
