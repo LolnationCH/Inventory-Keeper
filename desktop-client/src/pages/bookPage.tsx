@@ -66,7 +66,10 @@ export class BookPage extends React.Component<any,any> {
 
   _createTopBar() {
     const ButtonSaveProps = {
-      style : {marginBottom:"20px", marginTop:"15px"},
+      style : {
+        marginBottom:"20px", 
+        marginTop:"15px"
+      },
       fullWidth: true,
       variant: "contained" as "contained"
     }

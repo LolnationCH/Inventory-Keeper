@@ -3,7 +3,7 @@
   max-width: 100vw;
   overflow: hidden;
   background-color: #282c34;
-  color: white;
+  color: white !important;
   text-align: center;
 }
 
@@ -50,6 +50,14 @@
 
 .Left-bar {
   text-align: left;
+}
+
+.MuiInputBase-input {
+  color: white !important
+}
+
+.MuiFormLabel-root {
+  color: white !important
 }
 
 .Main-Div {
