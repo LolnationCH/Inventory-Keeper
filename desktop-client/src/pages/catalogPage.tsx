@@ -1,4 +1,4 @@
-import { GetBooksData } from "../queries/BookQuery";
+import { GetBooksData, SendBooksData } from "../queries/BookQuery";
 
 import * as React from "react";
 import { GridList, GridListTile, Button } from "@material-ui/core";
@@ -7,53 +7,94 @@ import SearchBar from 'material-ui-search-bar'
 
 import { Book } from "../data/book";
 
-type CatalogPageSate = {searchValue: string}
+type CatalogPageSate = {
+  searchValue: string;
+  bookGrid: JSX.Element;
+}
 
 export class CatalogPage extends React.Component<any, CatalogPageSate>{
 
   constructor(props: any) {
     super(props);
     this.state = {
-      searchValue: ""
+      searchValue: "",
+      bookGrid: <div/>,
     };
   }
 
-  GetBooksToShow() : Array<Book> {
-    const Data:Array<Book> = GetBooksData();
-    const searchQuery = this.state.searchValue.toLowerCase();
-    if (searchQuery === "")
-      return Data;
-    
-    return Data.filter(function (item){
-      return item.title?.toLowerCase().includes(searchQuery);
+  _refresh(){
+    this.GetBooksGridList().then((element: JSX.Element) => {
+      this.setState({
+        bookGrid: element
+      })
+    });
+  }
+
+  quickFix(data: Array<Book>){
+    var Books = new Array<Book>();
+    for (let dat of data){
+      var book = new Book();
+      book.SetBase(
+        dat.title as any,
+        dat.volumeNumber as any,
+        dat.authors as any,
+        dat.publisher as any,
+        dat.publishedDate as any,
+        dat.description as any,
+        dat.identifier as any,
+        dat.pageCount as any,
+        dat.thumbnail as any,
+        dat.language as any,
+        dat.type as any,
+      );
+      Books.push(book);
+    }
+    SendBooksData(Books);
+  }
+
+  GetBooksToShow() : Promise<Array<Book>> {
+    return GetBooksData().then( (Data:any) => {
+      const searchQuery = this.state.searchValue.toLowerCase();
+      if (searchQuery === "")
+        return Data;
+      
+      // Filter the books, replace with a fuzzy search?
+      return Data.filter( (item: Book) => {
+        return item.title?.toLowerCase().includes(searchQuery);
+      });
     });
   }
 
   GetBooksGridList() {
-    const Data = this.GetBooksToShow();
-    return (
-      <GridList cellHeight={182} spacing={10} cols={10}>
-        {Data.map( function(item: any){
-          return (
-            <GridListTile key={item.identifier.identifier}>
-              <Button component={Link} to={"/books/" + item.identifier.identifier}>
-                <img src={item.thumbnail} alt={item.title}/>
-              </Button>
-            </GridListTile>
-          )
-        })}
-      </GridList>
-    )
+    return this.GetBooksToShow().then((Data: Array<Book>) => {
+      return (
+        <GridList cellHeight={182} spacing={10} cols={10}>
+          {Data.map( function(item: Book){
+            return (
+              <GridListTile key={item.id}>
+                <Button component={Link} to={"/books/" + item.identifier.identifier}>
+                  <img src={item.thumbnail} alt={item.title}/>
+                </Button>
+              </GridListTile>
+            )
+          })}
+        </GridList>
+      )
+    })
   }
 
   GetSearchBar() {
     return (
       <SearchBar
           value={this.state.searchValue}
-          onChange={(value) => this.setState({searchValue: value})}
-          onCancelSearch={() => this.setState({searchValue: ""})}
+          onChange={(value) => { this.setState({searchValue: value}); this._refresh(); }}
+          onCancelSearch={() => { this.setState({searchValue: ""}); this._refresh();}}
       />
     )
+  }
+
+  componentDidMount() {
+    this._refresh();
   }
 
   render(){
@@ -61,7 +102,7 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
       <div>
         {this.GetSearchBar()}
         <p/>
-        {this.GetBooksGridList()}
+        {this.state.bookGrid}
       </div>
     )
   }

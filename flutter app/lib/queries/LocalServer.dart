@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-String queryAPI = 'http://192.168.1.100:6969/books';
+String queryAPI = 'http://192.168.1.100:6969/api/books';
 
 Future<dynamic> getBookData() async {
   try {

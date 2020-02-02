@@ -12,6 +12,8 @@ import { CatalogPage } from './pages/catalogPage';
 import { BookPage, BookPageModes } from './pages/bookPage';
 import { GetUnavailablePage } from './pages/unavailablePage';
 
+import { ToastContainer } from 'react-toastify';
+
 
 const App: React.FC = () => {
   const EmptyBookPage = (props: any) => {
@@ -28,6 +30,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
+      <ToastContainer />
       <BrowserView>
         <Router>
           <Grid container spacing={3}>

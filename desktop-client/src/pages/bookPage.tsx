@@ -1,11 +1,13 @@
 import * as React from "react";
 import { TextField, Grid, Button } from "@material-ui/core";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import SaveIcon from '@material-ui/icons/Save';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { GetBooksData, GetBookDataFromGoogle } from "../queries/BookQuery";
-import { Book, parseFromGoogleJson } from "../data/book";
+import { GetBooksData, SendBooksData, GetBookDataFromGoogle } from "../queries/BookQuery";
+import { Book, parseFromGoogleJson, Identifier } from "../data/book";
 
 export enum BookPageModes {
   EMPTY,
@@ -45,6 +47,7 @@ export class BookPage extends React.Component<any,any> {
     this._handleTextFieldChange = this._handleTextFieldChange.bind(this);
     this._saveBook = this._saveBook.bind(this);
     this._searchForBook = this._searchForBook.bind(this);
+    this._deleteBook = this._deleteBook.bind(this);
 
     this.TextFieldProps = {
       style : {marginBottom:"20px", marginTop:"5px"},
@@ -63,22 +66,7 @@ export class BookPage extends React.Component<any,any> {
     }
   }
 
-  componentDidMount() {
-    // Get all the books
-    const books = GetBooksData() as Array<Book>;
-    var id = this.props.match.params.id;
-
-    // Find the book required with the ISBN
-    var book = books.find(function(item: Book) {
-      return item.identifier.identifier === id;
-    });
-
-    if (book === undefined)
-      book = new Book();
-
-    this.OriginalBook = book;
-
-    // Set the state
+  _setStateWithBook(book: Book) {
     this.setState({
       title:         book.title,
       volumeNumber:  book.volumeNumber,
@@ -92,7 +80,39 @@ export class BookPage extends React.Component<any,any> {
       language:      book.language,
       type:          book.type,
     });
-    this.forceUpdate();
+  }
+
+  _partialSetStateWithBook(book: Book) {
+    this.setState({
+      title:         book.title,
+      authors:       book.authors,
+      publisher:     book.publisher,
+      publishedDate: book.publishedDate,
+      description:   book.description,
+      identifier:    book.identifier.identifier,
+      pageCount:     book.pageCount,
+      thumbnail:     book.thumbnail,
+      language:      book.language,
+    });
+  }
+
+  componentDidMount() {
+    // Get all the books
+    GetBooksData().then( (books : Array<Book>) => {
+      var id = this.props.match.params.id;
+
+      // Find the book required with the ISBN
+      var book = books.find(function(item: Book) {
+        return item.identifier.identifier === id;
+      });
+
+      if (book === undefined)
+        book = new Book();
+
+      this.OriginalBook = book;
+      this._setStateWithBook(book);
+      this.forceUpdate();
+    });
   }
 
   _createTopBarEmpty() {
@@ -113,16 +133,22 @@ export class BookPage extends React.Component<any,any> {
             }}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={1}>
           <Button {...this.ButtonSaveProps} color="primary" onClick={this._searchForBook}>
             <SearchIcon />
             &nbsp;Search
           </Button>
         </Grid>
-        <Grid item xs={2}>
-          <Button {...this.ButtonSaveProps} color="secondary" onClick={this._saveBook}>
+        <Grid item xs={1}>
+          <Button {...this.ButtonSaveProps} color="default" onClick={this._saveBook}>
             <SaveIcon />
             &nbsp;Save
+          </Button>
+        </Grid>
+        <Grid item xs={1}>
+          <Button {...this.ButtonSaveProps} color="secondary" onClick={this._deleteBook}>
+            <SaveIcon />
+            &nbsp;Delete
           </Button>
         </Grid>
       </Grid>
@@ -146,7 +172,24 @@ export class BookPage extends React.Component<any,any> {
     this.setState({[e.target.id]: e.target.value});
   }
 
+  _deleteBook() {
+    console.log(this.OriginalBook);
+    GetBooksData().then( (Data:Array<Book>) => {
+      var items = Data.filter( (value) => {
+        return value.id !== this.OriginalBook.id;
+      });
+      SendBooksData(items);
+    });
+    this.props.history.push('/catalog');
+  }
+
   _saveBook(){
+    if (!this.state.title || !this.state.title.trim() ||
+        !this.state.identifier || !this.state.identifier.trim()) {
+      alert("You have to specify a title and an ISBN");
+      return;
+    }
+
     var book = new Book();
     book.SetBase(
       this.state.title,
@@ -155,17 +198,37 @@ export class BookPage extends React.Component<any,any> {
       this.state.publisher,
       this.state.publishedDate,
       this.state.description,
-      this.state.identifier,
+      new Identifier(),
       this.state.pageCount,
       this.state.thumbnail,
       this.state.language,
       this.state.type,
     );
 
+    book.setIdentifier(this.state.identifier);
+
     if (book.isEqual(this.OriginalBook))
       return;
     
     // Save book to the database
+    GetBooksData().then( (Data:Array<Book>) => {
+      var items = Data.filter( (value) => {
+        return value.id !== this.OriginalBook.id;
+      });
+
+      // No book found in the catalog, adding to the library
+      if (items.length === Data.length) {
+        Data.push(book);
+        SendBooksData(Data);
+        toast("Book added to the library");
+      }
+      else {
+        items.push(book);
+        SendBooksData(items);
+        toast("Changes saved");
+      }
+      this.OriginalBook = book;
+    });
   }
 
   _searchForBook(){
@@ -174,47 +237,41 @@ export class BookPage extends React.Component<any,any> {
       alert("The search for the ISBN cannot be empty, please specify a value")
     
     // If book is already in the catalog, just redirect to the book info page
-    const books = GetBooksData() as Array<Book>;
-    for (let book of books){
-      if (book.identifier.identifier === ISBNsearch){
-        this.props.history.push('/books/' + ISBNsearch);
-        return;
-      }
-    }
-
-    // Fetch the books
-    GetBookDataFromGoogle(ISBNsearch).then( (data:any) => {
-      if (data.items.length <= 0)
-        return;
-      
-      var booksFound : Array<Book> = new Array<Book>();
-      var bookFound;
-      for (let entry of data.items){
-        var bookParsed = parseFromGoogleJson(entry);
-        booksFound.push(bookParsed);
-        if (bookParsed.getIdentifier() === ISBNsearch){
-          bookFound = bookParsed;
-          break;
+    GetBooksData().then( (books : Array<Book>) => {
+      for (let book of books){
+        if (book.identifier.identifier === ISBNsearch) {
+          this.props.history.push('/books/' + ISBNsearch);
+          return Promise.reject();
         }
       }
+      return Promise.resolve();
+    })
+    .then( () => {
+      // Fetch the books
+      GetBookDataFromGoogle(ISBNsearch).then( (data:any) => {
+        if (data.items.length <= 0)
+          return;
+        
+        var booksFound : Array<Book> = new Array<Book>();
+        var bookFound;
+        for (let entry of data.items){
+          var bookParsed = parseFromGoogleJson(entry);
+          booksFound.push(bookParsed);
+          if (bookParsed.getIdentifier() === ISBNsearch){
+            bookFound = bookParsed;
+            break;
+          }
+        }
 
-      if (bookFound === undefined) {
-        console.log(booksFound);
-      }
-      else {
-        this.setState({
-          title:         bookFound.title,
-          authors:       bookFound.authors,
-          publisher:     bookFound.publisher,
-          publishedDate: bookFound.publishedDate,
-          description:   bookFound.description,
-          identifier:    bookFound.identifier.identifier,
-          pageCount:     bookFound.pageCount,
-          thumbnail:     bookFound.thumbnail,
-          language:      bookFound.language,
-        });
-      }
-    });
+        if (bookFound === undefined) {
+          console.log(booksFound);
+        }
+        else {
+          this._partialSetStateWithBook(bookFound);
+        }
+      });
+    })
+    .catch( () => {});
   }
 
   render() {

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import HomeIcon from '@material-ui/icons/Home';
 import AddIcon from '@material-ui/icons/Add';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import SyncIcon from '@material-ui/icons/Sync';
+// import SyncIcon from '@material-ui/icons/Sync';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import InfoIcon from '@material-ui/icons/Info';
@@ -20,7 +20,7 @@ export const ItemsBooks = [
 ]
 
 const ItemsData = [
-  {text: "Server Sync", icon: <SyncIcon/>,     page: "/server"},
+  //{text: "Server Sync", icon: <SyncIcon/>,     page: "/server"},
   {text: "Local Import/Export", icon: <ImportExportIcon />,  page: "/local"},
   {text: "Delete Catalog", icon: <DeleteForeverIcon />,         page: "/deleteEverything"}
 ]
