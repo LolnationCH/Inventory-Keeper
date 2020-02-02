@@ -4,8 +4,8 @@ import { TextField, Grid, Button } from "@material-ui/core";
 import SaveIcon from '@material-ui/icons/Save';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { GetBookData } from "../queries/BookQuery";
-import { Book } from "../data/book";
+import { GetBooksData, GetBookDataFromGoogle } from "../queries/BookQuery";
+import { Book, parseFromGoogleJson } from "../data/book";
 
 export enum BookPageModes {
   EMPTY,
@@ -18,6 +18,8 @@ export class BookPage extends React.Component<any,any> {
   TextFieldProps : any;
 
   ButtonSaveProps : any;
+
+  OriginalBook: Book = new Book();
 
 
   constructor(props: any) {
@@ -53,7 +55,7 @@ export class BookPage extends React.Component<any,any> {
 
     this.ButtonSaveProps = {
       style : {
-        marginBottom:"20px", 
+        marginBottom:"20px",
         marginTop:"15px"
       },
       fullWidth: true,
@@ -63,7 +65,7 @@ export class BookPage extends React.Component<any,any> {
 
   componentDidMount() {
     // Get all the books
-    const books = GetBookData() as Array<Book>;
+    const books = GetBooksData() as Array<Book>;
     var id = this.props.match.params.id;
 
     // Find the book required with the ISBN
@@ -74,19 +76,21 @@ export class BookPage extends React.Component<any,any> {
     if (book === undefined)
       book = new Book();
 
+    this.OriginalBook = book;
+
     // Set the state
-    this.setState({ 
-      title: book.title,
-      volumeNumber: book.volumeNumber,
-      authors: book.authors,
-      publisher: book.publisher,
+    this.setState({
+      title:         book.title,
+      volumeNumber:  book.volumeNumber,
+      authors:       book.authors,
+      publisher:     book.publisher,
       publishedDate: book.publishedDate,
-      description: book.description,
-      identifier: book.identifier.identifier,
-      pageCount: book.pageCount,
-      thumbnail: book.thumbnail,
-      language: book.language,
-      type: book.type,
+      description:   book.description,
+      identifier:    book.identifier.identifier,
+      pageCount:     book.pageCount,
+      thumbnail:     book.thumbnail,
+      language:      book.language,
+      type:          book.type,
     });
     this.forceUpdate();
   }
@@ -95,7 +99,19 @@ export class BookPage extends React.Component<any,any> {
     return (
       <Grid container spacing={3}>
         <Grid item xs>
-          <TextField {...this.TextFieldProps} style={{marginTop:"5px"}} id="ISBNsearch" label="Search by ISBN" value={this.state.ISBNsearch || ''}/>
+          <TextField 
+            {...this.TextFieldProps}
+            style={{marginTop:"5px"}}
+            id="ISBNsearch"
+            label="Search by ISBN"
+            value={this.state.ISBNsearch || ''}
+            onKeyPress={(ev:any) => {
+              if (ev.key === 'Enter') {
+                this._searchForBook();
+                ev.preventDefault();
+              }
+            }}
+          />
         </Grid>
         <Grid item xs={2}>
           <Button {...this.ButtonSaveProps} color="primary" onClick={this._searchForBook}>
@@ -131,17 +147,78 @@ export class BookPage extends React.Component<any,any> {
   }
 
   _saveBook(){
+    var book = new Book();
+    book.SetBase(
+      this.state.title,
+      this.state.volumeNumber,
+      this.state.authors,
+      this.state.publisher,
+      this.state.publishedDate,
+      this.state.description,
+      this.state.identifier,
+      this.state.pageCount,
+      this.state.thumbnail,
+      this.state.language,
+      this.state.type,
+    );
 
+    if (book.isEqual(this.OriginalBook))
+      return;
+    
+    // Save book to the database
   }
 
   _searchForBook(){
-    if (!this.state.ISBNsearch || !this.state.ISBNsearch.trim())
+    const ISBNsearch = this.state.ISBNsearch;
+    if (!ISBNsearch || !ISBNsearch.trim())
       alert("The search for the ISBN cannot be empty, please specify a value")
     
+    // If book is already in the catalog, just redirect to the book info page
+    const books = GetBooksData() as Array<Book>;
+    for (let book of books){
+      if (book.identifier.identifier === ISBNsearch){
+        this.props.history.push('/books/' + ISBNsearch);
+        return;
+      }
+    }
+
+    // Fetch the books
+    GetBookDataFromGoogle(ISBNsearch).then( (data:any) => {
+      if (data.items.length <= 0)
+        return;
+      
+      var booksFound : Array<Book> = new Array<Book>();
+      var bookFound;
+      for (let entry of data.items){
+        var bookParsed = parseFromGoogleJson(entry);
+        booksFound.push(bookParsed);
+        if (bookParsed.getIdentifier() === ISBNsearch){
+          bookFound = bookParsed;
+          break;
+        }
+      }
+
+      if (bookFound === undefined) {
+        console.log(booksFound);
+      }
+      else {
+        this.setState({
+          title:         bookFound.title,
+          authors:       bookFound.authors,
+          publisher:     bookFound.publisher,
+          publishedDate: bookFound.publishedDate,
+          description:   bookFound.description,
+          identifier:    bookFound.identifier.identifier,
+          pageCount:     bookFound.pageCount,
+          thumbnail:     bookFound.thumbnail,
+          language:      bookFound.language,
+        });
+      }
+    });
   }
 
   render() {
-    const IsDisabled = this.props.Mode == BookPageModes.FIX;
+    const IsDisabled = this.props.Mode === BookPageModes.FIX;
 
     return(
     <div>

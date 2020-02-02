@@ -1,4 +1,4 @@
-import { GetBookData } from "../queries/BookQuery";
+import { GetBooksData } from "../queries/BookQuery";
 
 import * as React from "react";
 import { GridList, GridListTile, Button } from "@material-ui/core";
@@ -19,7 +19,7 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
   }
 
   GetBooksToShow() : Array<Book> {
-    const Data:Array<Book> = GetBookData();
+    const Data:Array<Book> = GetBooksData();
     const searchQuery = this.state.searchValue.toLowerCase();
     if (searchQuery === "")
       return Data;
