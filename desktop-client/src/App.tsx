@@ -9,11 +9,23 @@ import { LeftActionBar } from './components/leftActionBar';
 import { HomePage } from './pages/homePage';
 import { AboutPage } from './pages/aboutPage';
 import { CatalogPage } from './pages/catalogPage';
-import { BookPage } from './pages/bookPage';
+import { BookPage, BookPageModes } from './pages/bookPage';
 import { GetUnavailablePage } from './pages/unavailablePage';
 
 
 const App: React.FC = () => {
+  const EmptyBookPage = (props: any) => {
+    return (
+      <BookPage Mode={BookPageModes.EMPTY} {...props}/>
+    )
+  }
+
+  const EditBookPage = (props: any) => {
+    return (
+      <BookPage Mode={BookPageModes.EDITING} {...props}/>
+    )
+  }
+
   return (
     <div className="App">
       <BrowserView>
@@ -39,8 +51,8 @@ const App: React.FC = () => {
                   <Route exact path="/">
                     <HomePage/>
                   </Route>
-                  <Route path="/books/:id" component={BookPage} />
-                  <Route path="/books/" component={withRouter(BookPage)} />
+                  <Route path="/books/:id" component={EditBookPage} />
+                  <Route path="/books/" component={withRouter(EmptyBookPage)} />
                 </Switch>
               </div>
             </Grid>

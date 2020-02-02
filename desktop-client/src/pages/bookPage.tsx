@@ -7,8 +7,19 @@ import SearchIcon from '@material-ui/icons/Search';
 import { GetBookData } from "../queries/BookQuery";
 import { Book } from "../data/book";
 
+export enum BookPageModes {
+  EMPTY,
+  EDITING,
+  FIX
+}
+
 
 export class BookPage extends React.Component<any,any> {
+  TextFieldProps : any;
+
+  ButtonSaveProps : any;
+
+
   constructor(props: any) {
     super(props);
 
@@ -32,6 +43,22 @@ export class BookPage extends React.Component<any,any> {
     this._handleTextFieldChange = this._handleTextFieldChange.bind(this);
     this._saveBook = this._saveBook.bind(this);
     this._searchForBook = this._searchForBook.bind(this);
+
+    this.TextFieldProps = {
+      style : {marginBottom:"20px", marginTop:"5px"},
+      fullWidth: true,
+      onChange: this._handleTextFieldChange,
+      variant: "outlined" as "outlined"
+    };
+
+    this.ButtonSaveProps = {
+      style : {
+        marginBottom:"20px", 
+        marginTop:"15px"
+      },
+      fullWidth: true,
+      variant: "contained" as "contained"
+    }
   }
 
   componentDidMount() {
@@ -64,41 +91,39 @@ export class BookPage extends React.Component<any,any> {
     this.forceUpdate();
   }
 
-  _createTopBar() {
-    const ButtonSaveProps = {
-      style : {
-        marginBottom:"20px", 
-        marginTop:"15px"
-      },
-      fullWidth: true,
-      variant: "contained" as "contained"
-    }
-    const TextFieldProps = {
-      style : { marginBottom:"20px", marginTop:"5px"},
-      fullWidth: true,
-      onChange: this._handleTextFieldChange,
-      variant: "outlined" as "outlined"
-    }
-
+  _createTopBarEmpty() {
     return (
       <Grid container spacing={3}>
         <Grid item xs>
-          <TextField {...TextFieldProps} id="ISBNsearch" label="Search by ISBN" value={this.state.ISBNsearch || ''}/>
+          <TextField {...this.TextFieldProps} style={{marginTop:"5px"}} id="ISBNsearch" label="Search by ISBN" value={this.state.ISBNsearch || ''}/>
         </Grid>
         <Grid item xs={2}>
-          <Button {...ButtonSaveProps} color="primary" onClick={this._searchForBook}>
+          <Button {...this.ButtonSaveProps} color="primary" onClick={this._searchForBook}>
             <SearchIcon />
             &nbsp;Search
           </Button>
         </Grid>
         <Grid item xs={2}>
-          <Button {...ButtonSaveProps} color="secondary" onClick={this._saveBook}>
+          <Button {...this.ButtonSaveProps} color="secondary" onClick={this._saveBook}>
             <SaveIcon />
             &nbsp;Save
           </Button>
         </Grid>
       </Grid>
     )
+  }
+
+  _createTopBar(Mode : BookPageModes)
+  {
+    switch ( Mode ) {
+      case BookPageModes.EMPTY:
+        return this._createTopBarEmpty();
+      case BookPageModes.EDITING:
+        return this._createTopBarEmpty();
+      case BookPageModes.FIX:
+      default:
+        return null;
+    }
   }
 
   _handleTextFieldChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -116,34 +141,29 @@ export class BookPage extends React.Component<any,any> {
   }
 
   render() {
-    const TextFieldProps = {
-      style : {marginBottom:"20px"},
-      fullWidth: true,
-      onChange: this._handleTextFieldChange,
-      variant: "outlined" as "outlined"
-    }
+    const IsDisabled = this.props.Mode == BookPageModes.FIX;
 
     return(
     <div>
-      {this._createTopBar()}
+      {this._createTopBar(this.props.Mode)}
       <Grid container spacing={0}>
         <Grid item style={{paddingRight:"30px"}}>
           <img className="Big-thumbnail" style={{marginBottom:"20px"}} src={this.state.thumbnail || ''} alt={this.state.title || ''}/>
-          <TextField multiline={true}  {...TextFieldProps} id="thumbnail" label="Thumbnail" value={this.state.thumbnail || ''}/>
+          <TextField multiline={true}  {...this.TextFieldProps} id="thumbnail" label="Thumbnail" value={this.state.thumbnail || ''}/>
         </Grid>
         <Grid item xs>
-          <TextField {...TextFieldProps} id="title"         label="Title"                     value={this.state.title || ''}/>
-          <TextField {...TextFieldProps} id="authors"       label="Authors"                   value={this.state.authors || ''}/>
-          <TextField {...TextFieldProps} id="volumeNumber"  label="Volume"      type="number" value={this.state.volumeNumber || ''}/>
-          <TextField {...TextFieldProps} id="publisher"     label="Publisher"                 value={this.state.publisher || ''}/>
-          <TextField {...TextFieldProps} id="publishedDate" label="Publisher Date"            value={this.state.publishedDate || ''}/>
-          <TextField {...TextFieldProps} id="pageCount"     label="Page Count"  type="number" value={this.state.pageCount || ''}/>
-          <TextField {...TextFieldProps} id="language"      label="Language"                  value={this.state.language || ''}/>
-          <TextField {...TextFieldProps} id="identifier"    label="ISBN"                      value={this.state.identifier || ''}/>
-          <TextField {...TextFieldProps} id="type"          label="Type"                      value={this.state.type || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="title"         label="Title"                     value={this.state.title || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="authors"       label="Authors"                   value={this.state.authors || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="volumeNumber"  label="Volume"      type="number" value={this.state.volumeNumber || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="publisher"     label="Publisher"                 value={this.state.publisher || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="publishedDate" label="Publisher Date"            value={this.state.publishedDate || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="pageCount"     label="Page Count"  type="number" value={this.state.pageCount || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="language"      label="Language"                  value={this.state.language || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="identifier"    label="ISBN"                      value={this.state.identifier || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="type"          label="Type"                      value={this.state.type || ''}/>
         </Grid>
       </Grid>
-      <TextField {...TextFieldProps} multiline={true} id="description" label="Description" value={this.state.description || ''}/>
+      <TextField {...this.TextFieldProps} multiline={true} disabled={IsDisabled} id="description" label="Description" value={this.state.description || ''}/>
     </div>
     )
   }
