@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 var rp = require('request-promise');
 
 // Local fetches/post
-const defaultServerUrl = 'http://localhost:6969/api/books'
+const defaultServerUrl = 'http://localhost:6969'
 
 export function getUrlServer():string {
   var urlStored = localStorage.getItem('serverUrl');
@@ -14,10 +14,17 @@ export function getUrlServer():string {
     return urlStored;
 }
 
+export function TestServerOnline(): any{
+  const options = {
+    uri: getUrlServer(),
+    json: true
+  }
+  return rp(options);
+}
 
 export function GetBooksData(): any{ 
   const options = {
-    uri: getUrlServer(),
+    uri: getUrlServer() + "/api/books",
     json: true
   }
   return rp(options);
@@ -26,7 +33,7 @@ export function GetBooksData(): any{
 export function SendBooksData(books: Array<Book>, sucessToastMessage: string = "") {
   const options = {
     method: 'POST',
-    uri: getUrlServer(),
+    uri: getUrlServer() + "/api/books",
     body: books,
     json: true
   };

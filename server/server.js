@@ -15,3 +15,7 @@ console.log('todo list RESTful API server started on: ' + port);
 var bookRoute = require('./bookRoute');
 
 app.use('/api/books', bookRoute);
+
+app.get('/', function (req, res) {
+  res.send('Server online')
+})

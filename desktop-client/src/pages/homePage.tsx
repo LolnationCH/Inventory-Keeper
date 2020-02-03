@@ -1,46 +1,93 @@
-import { Component } from 'react';
 import * as React from "react";
-import CssBaseline from "@material-ui/core/CssBaseline/CssBaseline";
+import "./homePage.css"
 
-import { Grid, Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+// @ts-ignore
+import { Offline, Online } from "react-detect-offline";
+import { TestServerOnline } from "../queries/BookQuery";
 
-const buttonStyle = {width: '100%', height: '100px', color: 'white'};
+const homePageInfoStyleGreen = {
+  style: {
+    marginLeft:'30px',
+    border: '1px solid green',
+    color: 'black',
+    padding: '10px'
+  }
+}
 
-//const ManuelAddButtonStyle  = {...buttonStyle, ...{ backgroundColor: '#FF9800' }}
-const CatalogButtonStyle    = {...buttonStyle, ...{ backgroundColor: '#2196F3' }}
-const IsbnAddButtonStyle    = {...buttonStyle, ...{ backgroundColor: '#4CAF50' }}
-//const ServerSyncButtonStyle = {...buttonStyle, ...{ backgroundColor: '#00BCD4' }}
+const homePageInfoStyleRed = {
+  style: {
+    marginLeft:'30px',
+    border: '1px solid red',
+    color: 'black',
+    padding: '10px'
+  }
+}
 
-export class HomePage extends Component<any, any>{
-  constructor (props: any) {
+export class HomePage extends React.Component<any, any>{
+
+  constructor(props:any) {
     super(props);
     this.state = {
-      drawerOpen : false,
+      serverConnectionStatusDiv: this._getNoConnectionStatusDiv("Server Connection")
     }
+
+    this._serverConnectionStatus = this._serverConnectionStatus.bind(this);
+    this._internetConnectionStatus = this._internetConnectionStatus.bind(this);
   }
 
-  handleDrawerOpen = () => {
-    this.setState({drawerOpen : true});
+  _getNoConnectionStatusDiv(text: string) {
+    return (
+      <div className="homePageInfoDiv" {...homePageInfoStyleRed}>
+            {text} :&nbsp;
+            <span role="img" aria-label="cross-mark">❌</span>
+      </div>
+    )
   }
-  handleDrawerClose = () => {
-    this.setState({drawerOpen : false});
+  _getOkConnectionStatusDiv(text: string) {
+    return (
+      <div className="homePageInfoDiv" {...homePageInfoStyleGreen}>
+            {text} :&nbsp;
+            <span role="img" aria-label="check-mark">✔️</span>
+      </div>
+    )
+  }
+
+  _internetConnectionStatus() {
+    return (
+      <div>
+        <Offline>
+          {this._getNoConnectionStatusDiv("Internet connection")}
+        </Offline>
+        <Online>
+          {this._getOkConnectionStatusDiv("Internet connection")}
+        </Online>
+      </div>
+    )
+  }
+  _serverConnectionStatus(): any{
+    TestServerOnline().then( () => {
+      this.setState({
+        serverConnectionStatus: this._getOkConnectionStatusDiv("Server Connection")
+      })
+    })
+    .catch( () => {
+      this.setState({
+        serverConnectionStatus: this._getNoConnectionStatusDiv("Server Connection")
+      })
+    });
+  }
+
+  componentDidMount() {
+    this._serverConnectionStatus();
   }
 
   render(){
     return (
-      <div>
-        <CssBaseline/>
-        <div style = {{flexGrow: 1, margin: '1%'}}>
-          <Grid container spacing={3}>
-            <Grid item xs>
-              <Button style={IsbnAddButtonStyle} variant="contained" component={Link} to={"/books"}>Add with isbn</Button>
-            </Grid>
-            <Grid item xs>
-              <Button style={CatalogButtonStyle} variant="contained" component={Link} to={"/catalog"}>Catalog</Button>
-            </Grid>
-          </Grid>
-        </div>
+      <div className="homePageDiv">
+        <h1>Inventory Keeper</h1>
+        {this._internetConnectionStatus()}
+        <p/>
+        {this.state.serverConnectionStatus}
       </div>
     );
   }
