@@ -2,9 +2,7 @@ import { Component } from 'react';
 import * as React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline/CssBaseline";
 
-import Button from '@material-ui/core/Button';
-
-import { Grid } from '@material-ui/core';
+import { Grid, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
 const buttonStyle = {width: '100%', height: '100px', color: 'white'};

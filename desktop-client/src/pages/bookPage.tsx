@@ -133,19 +133,19 @@ export class BookPage extends React.Component<any,any> {
             }}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2}>
           <Button {...this.ButtonSaveProps} color="primary" onClick={this._searchForBook}>
             <SearchIcon />
             &nbsp;Search
           </Button>
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2}>
           <Button {...this.ButtonSaveProps} color="default" onClick={this._saveBook}>
             <SaveIcon />
             &nbsp;Save
           </Button>
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2}>
           <Button {...this.ButtonSaveProps} color="secondary" onClick={this._deleteBook}>
             <SaveIcon />
             &nbsp;Delete

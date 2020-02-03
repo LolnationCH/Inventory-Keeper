@@ -3,6 +3,24 @@ var express = require('express'),
 
 const jsonfile = require('jsonfile');
 const file = 'data.json'
+const BackupFileName = '_backup.json'
+
+var uploadCount = 0;
+
+function NeedsBackup(data) {
+  if (uploadCount == 10) {
+    uploadCount = 0;
+    const now = new Date();
+    jsonfile.writeFile(now.toString() + BackupFileName, data)
+    .then(result => {
+      console.log('Backup written');
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  }
+  uploadCount = uploadCount + 1;
+}
 
 router.get('/', (req, res) => {
   jsonfile.readFile(file, function (err, bookArray) {
@@ -16,6 +34,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+  NeedsBackup(req.body);
   jsonfile.writeFile(file, req.body)
     .then(result => {
       console.log('Written to Database');

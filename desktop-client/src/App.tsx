@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom';
 import { Grid } from '@material-ui/core';
 import { BrowserView, MobileView} from "react-device-detect";
+import { ToastContainer } from 'react-toastify';
 
 import { LeftActionBar } from './components/leftActionBar';
 
@@ -12,7 +13,7 @@ import { CatalogPage } from './pages/catalogPage';
 import { BookPage, BookPageModes } from './pages/bookPage';
 import { GetUnavailablePage } from './pages/unavailablePage';
 
-import { ToastContainer } from 'react-toastify';
+import { LocalPage } from './pages/localPage';
 
 
 const App: React.FC = () => {
@@ -33,18 +34,16 @@ const App: React.FC = () => {
       <ToastContainer />
       <BrowserView>
         <Router>
-          <Grid container spacing={3}>
-            <Grid item xs>
-              <p/>
-            </Grid>
-          </Grid>
-          <Grid container spacing={1}>
-            <Grid item xs="auto" className="Left-bar">
+          <Grid style={{marginTop:"10px"}} container spacing={1}>
+            <Grid style={{marginLeft:"10px"}} item xs="auto" className="Left-bar">
               <LeftActionBar/>
             </Grid>
             <Grid item xs>
               <div className="Main-Div">
                 <Switch>
+                  <Route exact path="/local">
+                    <LocalPage/>
+                  </Route>
                   <Route exact path="/about">
                     <AboutPage/>
                   </Route>
