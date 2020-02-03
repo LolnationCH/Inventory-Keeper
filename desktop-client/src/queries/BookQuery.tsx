@@ -4,10 +4,20 @@ import { toast } from "react-toastify";
 var rp = require('request-promise');
 
 // Local fetches/post
-const queryLocalhostBook = 'http://localhost:6969/api/books'
+const defaultServerUrl = 'http://localhost:6969/api/books'
+
+export function getUrlServer():string {
+  var urlStored = localStorage.getItem('serverUrl');
+  if (!urlStored || urlStored === "")
+    return defaultServerUrl;
+  else
+    return urlStored;
+}
+
+
 export function GetBooksData(): any{ 
   const options = {
-    uri: queryLocalhostBook,
+    uri: getUrlServer(),
     json: true
   }
   return rp(options);
@@ -16,7 +26,7 @@ export function GetBooksData(): any{
 export function SendBooksData(books: Array<Book>, sucessToastMessage: string = "") {
   const options = {
     method: 'POST',
-    uri: 'http://localhost:6969/api/books',
+    uri: getUrlServer(),
     body: books,
     json: true
   };

@@ -27,7 +27,19 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
       this.setState({
         bookGrid: element
       })
+    }).catch( (err) => {
+      this.setState({
+        bookGrid: this._errorServer()
+      })
     });
+  }
+
+  _errorServer() {
+    return (
+      <div>
+        Couldn't find the server
+      </div>
+    )
   }
 
   quickFix(data: Array<Book>){

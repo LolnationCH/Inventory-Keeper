@@ -26,7 +26,7 @@ const ItemsOthers = [
   {text: "About"   , icon: <InfoIcon/>,       page: "/about"}
 ]
 
-export function GetIconButton(text: String, icon: JSX.Element, page: string) {
+function GetIconButton(text: String, icon: JSX.Element, page: string) {
   return (
     <Button
       fullWidth={true}
@@ -35,6 +35,18 @@ export function GetIconButton(text: String, icon: JSX.Element, page: string) {
       component={Link}
       to={page}>
       {text}
+    </Button>
+  )
+}
+
+function GetIconButtonSmall(icon: JSX.Element, page: string) {
+  return (
+    <Button
+      variant="contained"
+      startIcon={icon}
+      component={Link}
+      to={page}>
+      <div/>
     </Button>
   )
 }
@@ -54,13 +66,43 @@ export function GetButtonBooks() {
   )
 }
 
-export function GetButtonAbout() {
+export function GetButtonOthers() {
   return (
     <div>
     {ItemsOthers.map(function(item){
       return (
         <div key={item.text}>
           {GetIconButton(item.text, item.icon, item.page)}
+          <p/>
+        </div>
+      );
+    })}
+    </div>
+  )
+}
+
+export function GetButtonBooksSmall() {
+  return (
+    <div>
+    {ItemsBooks.map(function(item){
+      return (
+        <div key={item.text}>
+          {GetIconButtonSmall(item.icon, item.page)}
+          <p/>
+        </div>
+      );
+    })}
+    </div>
+  )
+}
+
+export function GetButtonOthersSmall() {
+  return (
+    <div>
+    {ItemsOthers.map(function(item){
+      return (
+        <div key={item.text}>
+          {GetIconButtonSmall(item.icon, item.page)}
           <p/>
         </div>
       );

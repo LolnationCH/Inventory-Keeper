@@ -12,8 +12,8 @@ import { AboutPage } from './pages/aboutPage';
 import { CatalogPage } from './pages/catalogPage';
 import { BookPage, BookPageModes } from './pages/bookPage';
 import { GetUnavailablePage } from './pages/unavailablePage';
-
 import { LocalPage } from './pages/localPage';
+import { SettingsPage } from './pages/settingsPage';
 
 
 const App: React.FC = () => {
@@ -41,6 +41,9 @@ const App: React.FC = () => {
             <Grid item xs>
               <div className="Main-Div">
                 <Switch>
+                  <Route exact path="/">
+                    <HomePage/>
+                  </Route>
                   <Route exact path="/local">
                     <LocalPage/>
                   </Route>
@@ -50,8 +53,8 @@ const App: React.FC = () => {
                   <Route exact path="/catalog">
                     <CatalogPage/>
                   </Route>
-                  <Route exact path="/">
-                    <HomePage/>
+                  <Route exact path="/settings">
+                    <SettingsPage/>
                   </Route>
                   <Route path="/books/:id" component={EditBookPage} />
                   <Route path="/books/" component={withRouter(EmptyBookPage)} />
