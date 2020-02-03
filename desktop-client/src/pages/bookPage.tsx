@@ -1,6 +1,5 @@
 import * as React from "react";
 import { TextField, Grid, Button } from "@material-ui/core";
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import SaveIcon from '@material-ui/icons/Save';
@@ -178,7 +177,7 @@ export class BookPage extends React.Component<any,any> {
       var items = Data.filter( (value) => {
         return value.id !== this.OriginalBook.id;
       });
-      SendBooksData(items);
+      SendBooksData(items, "Book deleted");
     });
     this.props.history.push('/catalog');
   }
@@ -219,13 +218,11 @@ export class BookPage extends React.Component<any,any> {
       // No book found in the catalog, adding to the library
       if (items.length === Data.length) {
         Data.push(book);
-        SendBooksData(Data);
-        toast("Book added to the library");
+        SendBooksData(Data, "Book added to the library");
       }
       else {
         items.push(book);
-        SendBooksData(items);
-        toast("Changes saved");
+        SendBooksData(items,"Changes saved");
       }
       this.OriginalBook = book;
     });

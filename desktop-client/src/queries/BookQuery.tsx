@@ -1,4 +1,5 @@
 import { Book } from "../data/book.js";
+import { toast } from "react-toastify";
 
 var rp = require('request-promise');
 
@@ -12,7 +13,7 @@ export function GetBooksData(): any{
   return rp(options);
 }
 
-export function SendBooksData(books: Array<Book>): any{
+export function SendBooksData(books: Array<Book>, sucessToastMessage: string = "") {
   const options = {
     method: 'POST',
     uri: 'http://localhost:6969/api/books',
@@ -21,10 +22,11 @@ export function SendBooksData(books: Array<Book>): any{
   };
   rp(options)
   .then( (parsedBody: any) => {
-      console.log(parsedBody);
+    if (sucessToastMessage !== "")
+      toast(sucessToastMessage);
   })
   .catch( (err: any) => {
-      console.log(err);
+    console.log(err);
   });
 }
 
