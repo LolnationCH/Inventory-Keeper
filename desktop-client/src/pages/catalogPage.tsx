@@ -23,7 +23,7 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
   }
 
   _refresh(){
-    this.GetBooksGridList().then((element: JSX.Element) => {
+    this.GetBooksGrid().then((element: JSX.Element) => {
       this.setState({
         bookGrid: element
       })
@@ -77,21 +77,25 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
     });
   }
 
-  GetBooksGridList() {
+  GetBooksGridList(Books: Array<Book>) {
+    return (
+      <GridList cellHeight={182} spacing={10} cols={10}>
+        {Books.map( function(item: Book){
+          return (
+            <GridListTile key={item.id}>
+              <Button component={Link} to={"/books/" + item.identifier.identifier}>
+                <img className="BookCover" src={item.thumbnail} alt={item.title}/>
+              </Button>
+            </GridListTile>
+          )
+        })}
+      </GridList>
+    )
+  }
+
+  GetBooksGrid() {
     return this.GetBooksToShow().then((Data: Array<Book>) => {
-      return (
-        <GridList cellHeight={182} spacing={10} cols={10}>
-          {Data.map( function(item: Book){
-            return (
-              <GridListTile key={item.id}>
-                <Button component={Link} to={"/books/" + item.identifier.identifier}>
-                  <img src={item.thumbnail} alt={item.title}/>
-                </Button>
-              </GridListTile>
-            )
-          })}
-        </GridList>
-      )
+      return this.GetBooksGridList(Data);
     })
   }
 

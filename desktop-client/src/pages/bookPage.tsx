@@ -5,8 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import SaveIcon from '@material-ui/icons/Save';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { GetBooksData, SendBooksData, GetBookDataFromGoogle } from "../queries/BookQuery";
-import { Book, parseFromGoogleJson, Identifier } from "../data/book";
+import { GetBooksData, SendBooksData, GetBookDataFromGoogle, GetBookDataFromOpenLibraryApi } from "../queries/BookQuery";
+import { Book, parseFromGoogleJson, Identifier, parseFromOpenLibraryJson } from "../data/book";
 
 export enum BookPageModes {
   EMPTY,
@@ -228,45 +228,104 @@ export class BookPage extends React.Component<any,any> {
     });
   }
 
-  _searchForBook(){
-    const ISBNsearch = this.state.ISBNsearch;
-    if (!ISBNsearch || !ISBNsearch.trim())
-      alert("The search for the ISBN cannot be empty, please specify a value")
-    
-    // If book is already in the catalog, just redirect to the book info page
-    GetBooksData().then( (books : Array<Book>) => {
-      for (let book of books){
-        if (book.identifier.identifier === ISBNsearch) {
-          this.props.history.push('/books/' + ISBNsearch);
+  _bookInCollection(ISBNsearch: string): Promise<any> {
+    return (
+      GetBooksData().then( (books : Array<Book>) => {
+        for (let book of books){
+          if (book.identifier.identifier === ISBNsearch) {
+            this.props.history.push('/books/' + ISBNsearch);
+            return Promise.reject(); // Reject cause we don't want to search for the book
+          }
+        }
+        return Promise.resolve();
+      }));
+  }
+
+  _bookOpenLibrary(ISBNsearch: string): Promise<any> {
+    return (
+      GetBookDataFromOpenLibraryApi(ISBNsearch).then( (data:any) => {
+        var keyList = new Array<string>();
+        var bookFound;
+        
+        // Iterate through all the books received
+        for (let key in data) {
+          keyList.push(key);
+          var book = parseFromOpenLibraryJson(data[key]);
+
+          // If we have a perfect match, just ignore the others
+          if (book && book.getIdentifier() === ISBNsearch){
+            bookFound = book;
+            break;
+          }
+        }
+
+        // No book received
+        if (keyList.length === 0)
+          return Promise.reject();
+
+        // Couldn't find the book
+        if (!bookFound || bookFound === undefined) {
+          console.log(bookFound);
           return Promise.reject();
         }
-      }
-      return Promise.resolve();
-    })
-    .then( () => {
-      // Fetch the books
+        else {
+          this._partialSetStateWithBook((bookFound as unknown) as Book);
+          return Promise.resolve();
+        }
+      })
+    );
+  }
+
+  _bookGoogleBook(ISBNsearch: string): Promise<any> {
+    return (
       GetBookDataFromGoogle(ISBNsearch).then( (data:any) => {
-        if (data.items.length <= 0)
-          return;
+        if (!data.items || data.items.length <= 0)
+          return Promise.reject();
         
+        // Iterate through all the books received
         var booksFound : Array<Book> = new Array<Book>();
         var bookFound;
         for (let entry of data.items){
           var bookParsed = parseFromGoogleJson(entry);
           booksFound.push(bookParsed);
+
+          // If we have a perfect match, just ignore the others
           if (bookParsed.getIdentifier() === ISBNsearch){
             bookFound = bookParsed;
             break;
           }
         }
-
+  
+        // If we couldn't find the book, just return all the books received
         if (bookFound === undefined) {
-          console.log(booksFound);
+          return Promise.reject(booksFound);
         }
         else {
           this._partialSetStateWithBook(bookFound);
+          return Promise.resolve();
         }
+      })
+    )
+  }
+
+  _searchForBook(){
+    const ISBNsearch = this.state.ISBNsearch;
+    if (!ISBNsearch || !ISBNsearch.trim())
+      alert("The search for the ISBN cannot be empty, please specify a value")
+
+    this._bookInCollection(ISBNsearch)
+    .then( () => {
+      this._bookGoogleBook(ISBNsearch) // Search with GoogleBook Api
+      .then( () => {} )
+      .catch( (booksFound: Array<Book>) => {
+        this._bookOpenLibrary(ISBNsearch) // Search with OpenLibrary Api
+        .then(()=>{})
+        .catch(() => {
+          // Couldn't find a exact match for the book, show what we've got in case a book has a mislabled isbn
+          this.props.history.push('/bookSelection/');
+        });
       });
+      return null;
     })
     .catch( () => {});
   }

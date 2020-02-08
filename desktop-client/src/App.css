@@ -90,3 +90,8 @@
   height: '100px';
   color: 'white';
 }
+
+.BookCover {
+  width: 128px;
+  height: 182px;
+}

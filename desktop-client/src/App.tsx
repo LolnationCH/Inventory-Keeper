@@ -53,6 +53,9 @@ const App: React.FC = () => {
                   <Route exact path="/catalog">
                     <CatalogPage/>
                   </Route>
+                  <Route exact path="/bookSelection/">
+                    <CatalogPage/>
+                  </Route>
                   <Route exact path="/settings">
                     <SettingsPage/>
                   </Route>

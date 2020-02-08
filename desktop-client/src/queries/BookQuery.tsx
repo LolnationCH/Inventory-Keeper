@@ -48,10 +48,20 @@ export function SendBooksData(books: Array<Book>, sucessToastMessage: string = "
 }
 
 // External fetches
-const queryAPI = 'https://www.googleapis.com/books/v1/volumes?q=isbn';
+
 export function GetBookDataFromGoogle(isbn: string): Promise<any>{
+  const googleBookAPI = `https://www.googleapis.com/books/v1/volumes?q=isbn${isbn}`;
   const options = {
-    uri: queryAPI + isbn,
+    uri: googleBookAPI,
+    json: true
+  }
+  return rp(options);
+}
+
+export function GetBookDataFromOpenLibraryApi(isbn: string): Promise<any>{
+  const openLibraryApi = `https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&jscmd=details&format=json`
+  const options = {
+    uri: openLibraryApi,
     json: true
   }
   return rp(options);

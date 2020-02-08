@@ -106,3 +106,41 @@ export function parseFromGoogleJson(googleBookObj: any): Book {
 
   return book;
 }
+
+function OpenLibrarythumbnail(thumbnail_url: string): string {
+  var covername = thumbnail_url.substring(thumbnail_url.lastIndexOf('/')+1);
+  var urlPath = thumbnail_url.substring(0, thumbnail_url.lastIndexOf('/'));
+  return urlPath + '/' + covername.replace(new RegExp('-S', 'g'), '-L');
+}
+
+export function parseFromOpenLibraryJson(openLibraryObj: any): Book | null {
+  if (openLibraryObj["details"] == null)
+    return null;
+
+  const details = openLibraryObj["details"];
+
+  // Get the book info
+  var book = new Book();
+
+  if (openLibraryObj["thumbnail_url"] != null)
+    book.thumbnail = OpenLibrarythumbnail(openLibraryObj["thumbnail_url"]);
+
+  if (details["title"] != null)
+    book.title = details["title"];
+  if (details["isbn_13"] != null)
+    book.setIdentifier(details['isbn_13'][0]);
+  if (details["authors"] != null)
+    book.authors       = details["authors"].map( (item: any) => { return item.name });
+  if (details["publishers"] != null)
+    book.publisher     = details["publishers"][0];
+  if (details["publish_date"] != null)
+    book.publishedDate = details["publish_date"];
+  if (details["description"] != null)
+    book.description   = details["description"];
+  if (details["number_of_pages"] != null)
+    book.pageCount     = details["number_of_pages"];
+  if (details["languages"] != null)
+    book.language      = details["languages"].map( (item:any) => { return item.key });
+  
+  return book;
+}
