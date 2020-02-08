@@ -12,6 +12,22 @@ export class Identifier {
 }
 
 const defaultThumbnail = "https://i.imgur.com/QWa1CA7.png";
+
+export function GetGoogleThumbnail(isbn: string){
+  return `https://books.google.com/books/content?vid=ISBN${isbn}&printsec=frontcover&img=1&zoom=1`
+}
+export function GetOpenLibraryThumbnail(isbn: string){
+  return `http://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`
+}
+
+export function IsGoogleThumbnail(url: string) {
+  return url.includes("google");
+}
+
+export function IsOpenLibraryThumbnail(url: string) {
+  return url.includes("openlibrary");
+}
+
 const uuidv4 = require('uuid/v4');
 
 export class Book {
@@ -92,8 +108,6 @@ export function parseFromGoogleJson(googleBookObj: any): Book {
     book.description   = volumeInfo["description"];
   if (volumeInfo["pageCount"] != null)
     book.pageCount     = volumeInfo["pageCount"];
-  if (volumeInfo["imageLinks"] != null)
-    book.thumbnail     = volumeInfo["imageLinks"]["thumbnail"].replace(new RegExp('&edge=curl', 'g'), '');
   if (volumeInfo["language"] != null)
     book.language      = volumeInfo["language"];
 
@@ -104,6 +118,7 @@ export function parseFromGoogleJson(googleBookObj: any): Book {
       book.setIdentifier(industryIdentifier["identifier"]);
   }
 
+  book.thumbnail = GetGoogleThumbnail(book.getIdentifier());
   return book;
 }
 
@@ -122,9 +137,6 @@ export function parseFromOpenLibraryJson(openLibraryObj: any): Book | null {
   // Get the book info
   var book = new Book();
 
-  if (openLibraryObj["thumbnail_url"] != null)
-    book.thumbnail = OpenLibrarythumbnail(openLibraryObj["thumbnail_url"]);
-
   if (details["title"] != null)
     book.title = details["title"];
   if (details["isbn_13"] != null)
@@ -141,6 +153,8 @@ export function parseFromOpenLibraryJson(openLibraryObj: any): Book | null {
     book.pageCount     = details["number_of_pages"];
   if (details["languages"] != null)
     book.language      = details["languages"].map( (item:any) => { return item.key });
+
+  book.thumbnail = GetOpenLibraryThumbnail(book.getIdentifier());
   
   return book;
 }

@@ -6,7 +6,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import SearchIcon from '@material-ui/icons/Search';
 
 import { GetBooksData, SendBooksData, GetBookDataFromGoogle, GetBookDataFromOpenLibraryApi } from "../queries/BookQuery";
-import { Book, parseFromGoogleJson, Identifier, parseFromOpenLibraryJson } from "../data/book";
+import { Book, parseFromGoogleJson, Identifier, parseFromOpenLibraryJson, GetGoogleThumbnail, IsOpenLibraryThumbnail, GetOpenLibraryThumbnail } from "../data/book";
 import { toast } from "react-toastify";
 
 export enum BookPageModes {
@@ -15,14 +15,10 @@ export enum BookPageModes {
   FIX
 }
 
-
-export class BookPage extends React.Component<any,any> {
+export class BookPage extends React.Component<any, any> {
   TextFieldProps : any;
-
   ButtonSaveProps : any;
-
   OriginalBook: Book = new Book();
-
 
   constructor(props: any) {
     super(props);
@@ -45,6 +41,7 @@ export class BookPage extends React.Component<any,any> {
     }
 
     this._handleTextFieldChange = this._handleTextFieldChange.bind(this);
+    this._handleSwitchThumbnail = this._handleSwitchThumbnail.bind(this);
     this._saveBook = this._saveBook.bind(this);
     this._searchForBook = this._searchForBook.bind(this);
     this._deleteBook = this._deleteBook.bind(this);
@@ -170,6 +167,13 @@ export class BookPage extends React.Component<any,any> {
 
   _handleTextFieldChange(e: React.ChangeEvent<HTMLInputElement>) {
     this.setState({[e.target.id]: e.target.value});
+  }
+
+  _handleSwitchThumbnail(e: any) {
+    if (IsOpenLibraryThumbnail(this.state.thumbnail))
+      this.setState({thumbnail: GetGoogleThumbnail(this.state.identifier)})
+    else
+      this.setState({thumbnail: GetOpenLibraryThumbnail(this.state.identifier)})
   }
 
   _deleteBook() {
@@ -348,6 +352,7 @@ export class BookPage extends React.Component<any,any> {
         <Grid item style={{paddingRight:"30px"}}>
           <img className="Big-thumbnail" style={{marginBottom:"20px"}} src={this.state.thumbnail || ''} alt={this.state.title || ''}/>
           <TextField multiline={true}  {...this.TextFieldProps} id="thumbnail" label="Thumbnail" value={this.state.thumbnail || ''}/>
+          <Button fullWidth={true} variant={"contained"} onClick={this._handleSwitchThumbnail}>Switch to OpenLibrary Covers</Button>
         </Grid>
         <Grid item xs>
           <TextField {...this.TextFieldProps} disabled={IsDisabled} id="title"         label="Title"                     value={this.state.title || ''}/>
