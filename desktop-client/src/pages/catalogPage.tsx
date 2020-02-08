@@ -4,7 +4,7 @@ import * as React from "react";
 import SearchBar from 'material-ui-search-bar'
 
 import { Book } from "../data/book";
-import { Grid, Select, GridList, GridListTile, Button, MenuItem, Input, Checkbox, ListItemText } from "@material-ui/core";
+import { GridList, GridListTile, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 

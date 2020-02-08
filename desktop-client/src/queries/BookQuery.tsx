@@ -14,9 +14,9 @@ export function getUrlServer():string {
     return urlStored;
 }
 
-export function TestServerOnline(): any{
+export function TestConnection(uri: string): Promise<any> {
   const options = {
-    uri: getUrlServer(),
+    uri: uri,
     json: true
   }
   return rp(options);

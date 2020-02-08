@@ -122,12 +122,6 @@ export function parseFromGoogleJson(googleBookObj: any): Book {
   return book;
 }
 
-function OpenLibrarythumbnail(thumbnail_url: string): string {
-  var covername = thumbnail_url.substring(thumbnail_url.lastIndexOf('/')+1);
-  var urlPath = thumbnail_url.substring(0, thumbnail_url.lastIndexOf('/'));
-  return urlPath + '/' + covername.replace(new RegExp('-S', 'g'), '-L');
-}
-
 export function parseFromOpenLibraryJson(openLibraryObj: any): Book | null {
   if (openLibraryObj["details"] == null)
     return null;

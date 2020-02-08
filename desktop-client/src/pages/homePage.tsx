@@ -3,7 +3,7 @@ import "./homePage.css"
 
 // @ts-ignore
 import { Offline, Online } from "react-detect-offline";
-import { TestServerOnline } from "../queries/BookQuery";
+import { TestConnection, getUrlServer } from "../queries/BookQuery";
 
 const homePageInfoStyleGreen = {
   style: {
@@ -65,7 +65,7 @@ export class HomePage extends React.Component<any, any>{
     )
   }
   _serverConnectionStatus(): any{
-    TestServerOnline().then( () => {
+    TestConnection(getUrlServer()).then( () => {
       this.setState({
         serverConnectionStatus: this._getOkConnectionStatusDiv("Server Connection")
       })
