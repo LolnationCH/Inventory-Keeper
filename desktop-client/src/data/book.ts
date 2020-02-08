@@ -136,7 +136,7 @@ export function parseFromOpenLibraryJson(openLibraryObj: any): Book | null {
   if (details["publish_date"] != null)
     book.publishedDate = details["publish_date"];
   if (details["description"] != null)
-    book.description   = details["description"];
+    book.description   = details["description"]["value"];
   if (details["number_of_pages"] != null)
     book.pageCount     = details["number_of_pages"];
   if (details["languages"] != null)

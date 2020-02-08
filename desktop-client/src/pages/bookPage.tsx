@@ -7,6 +7,7 @@ import SearchIcon from '@material-ui/icons/Search';
 
 import { GetBooksData, SendBooksData, GetBookDataFromGoogle, GetBookDataFromOpenLibraryApi } from "../queries/BookQuery";
 import { Book, parseFromGoogleJson, Identifier, parseFromOpenLibraryJson } from "../data/book";
+import { toast } from "react-toastify";
 
 export enum BookPageModes {
   EMPTY,
@@ -172,14 +173,13 @@ export class BookPage extends React.Component<any,any> {
   }
 
   _deleteBook() {
-    console.log(this.OriginalBook);
     GetBooksData().then( (Data:Array<Book>) => {
       var items = Data.filter( (value) => {
         return value.id !== this.OriginalBook.id;
       });
       SendBooksData(items, "Book deleted");
     });
-    this.props.history.push('/catalog');
+    setTimeout(() => { this.props.history.push('/catalog'); }, 500);
   }
 
   _saveBook(){
@@ -280,14 +280,15 @@ export class BookPage extends React.Component<any,any> {
     return (
       GetBookDataFromGoogle(ISBNsearch).then( (data:any) => {
         if (!data.items || data.items.length <= 0)
-          return Promise.reject();
+          return Promise.reject(null);
         
         // Iterate through all the books received
         var booksFound : Array<Book> = new Array<Book>();
         var bookFound;
         for (let entry of data.items){
           var bookParsed = parseFromGoogleJson(entry);
-          booksFound.push(bookParsed);
+          if (bookParsed.getIdentifier() !== "")
+            booksFound.push(bookParsed);
 
           // If we have a perfect match, just ignore the others
           if (bookParsed.getIdentifier() === ISBNsearch){
@@ -318,10 +319,17 @@ export class BookPage extends React.Component<any,any> {
       this._bookGoogleBook(ISBNsearch) // Search with GoogleBook Api
       .then( () => {} )
       .catch( (booksFound: Array<Book>) => {
+        console.log(booksFound);
         this._bookOpenLibrary(ISBNsearch) // Search with OpenLibrary Api
         .then(()=>{})
         .catch(() => {
           // Couldn't find a exact match for the book, show what we've got in case a book has a mislabled isbn
+          if (booksFound === null) {
+            toast("No book found with corresponding ISBN");
+            return null;
+          }
+          
+          localStorage.setItem('bookSelection', JSON.stringify(booksFound));
           this.props.history.push('/bookSelection/');
         });
       });

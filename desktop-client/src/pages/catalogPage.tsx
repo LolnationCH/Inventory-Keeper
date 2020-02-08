@@ -1,11 +1,10 @@
-import { GetBooksData, SendBooksData } from "../queries/BookQuery";
+import { GetBooksData } from "../queries/BookQuery";
 
 import * as React from "react";
-import { GridList, GridListTile, Button } from "@material-ui/core";
-import { Link } from "react-router-dom";
 import SearchBar from 'material-ui-search-bar'
 
 import { Book } from "../data/book";
+import { GetBooksGridList, DivErrorServer } from "./catalogFunctions";
 
 type CatalogPageSate = {
   searchValue: string;
@@ -29,39 +28,9 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
       })
     }).catch( (err) => {
       this.setState({
-        bookGrid: this._errorServer()
+        bookGrid: DivErrorServer()
       })
     });
-  }
-
-  _errorServer() {
-    return (
-      <div>
-        Couldn't find the server
-      </div>
-    )
-  }
-
-  quickFix(data: Array<Book>){
-    var Books = new Array<Book>();
-    for (let dat of data){
-      var book = new Book();
-      book.SetBase(
-        dat.title as any,
-        dat.volumeNumber as any,
-        dat.authors as any,
-        dat.publisher as any,
-        dat.publishedDate as any,
-        dat.description as any,
-        dat.identifier as any,
-        dat.pageCount as any,
-        dat.thumbnail as any,
-        dat.language as any,
-        dat.type as any,
-      );
-      Books.push(book);
-    }
-    SendBooksData(Books);
   }
 
   GetBooksToShow() : Promise<Array<Book>> {
@@ -77,25 +46,9 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
     });
   }
 
-  GetBooksGridList(Books: Array<Book>) {
-    return (
-      <GridList cellHeight={182} spacing={10} cols={10}>
-        {Books.map( function(item: Book){
-          return (
-            <GridListTile key={item.id}>
-              <Button component={Link} to={"/books/" + item.identifier.identifier}>
-                <img className="BookCover" src={item.thumbnail} alt={item.title}/>
-              </Button>
-            </GridListTile>
-          )
-        })}
-      </GridList>
-    )
-  }
-
   GetBooksGrid() {
     return this.GetBooksToShow().then((Data: Array<Book>) => {
-      return this.GetBooksGridList(Data);
+      return GetBooksGridList(Data);
     })
   }
 

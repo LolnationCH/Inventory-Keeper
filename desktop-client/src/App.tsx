@@ -14,6 +14,7 @@ import { BookPage, BookPageModes } from './pages/bookPage';
 import { GetUnavailablePage } from './pages/unavailablePage';
 import { LocalPage } from './pages/localPage';
 import { SettingsPage } from './pages/settingsPage';
+import { BookSelectionPage } from './pages/bookSelectionPage';
 
 
 const App: React.FC = () => {
@@ -54,7 +55,7 @@ const App: React.FC = () => {
                     <CatalogPage/>
                   </Route>
                   <Route exact path="/bookSelection/">
-                    <CatalogPage/>
+                    <BookSelectionPage/>
                   </Route>
                   <Route exact path="/settings">
                     <SettingsPage/>
