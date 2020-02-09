@@ -3,7 +3,7 @@ import 'package:qr_mobile_vision/qr_camera.dart';
 
 import '../dialogs.dart';
 import '../objects/Books.dart';
-import '../queries/GoogleQuery.dart';
+import 'package:inventory_keeper/queries/ExternalQueries.dart';
 import '../queries/SaveFile.dart';
 
 import 'selectBook.dart';
@@ -48,13 +48,34 @@ class _BardcodeScanner extends State<BardcodeScanner>{
 
   void _confirmAddition(String code, Map<String, dynamic> response) {
     dynamic items = response['items'];
-    if (items == null || items.length == 0)
+    if (items == null || items.length == 0) 
     {
-      showBasicDialog(context, "No book found", "No book was found for the ISBN \"$code\"",
-      onOkPressed: () {
-        hasScanned = false;
-        _isbnSet.remove(code);
-        Navigator.of(context).pop();
+      getOpenLibraryData(code).then( (response) {
+        var book;
+        response.forEach( (k,v) {
+          book = Book.fromOpenLibraryJson(v);
+        });
+        if (book != null)
+          showChoiceDialog(context, "Add book to catalog", "Are you sure you want to add ${book.title} to your catalog?",
+          () {
+            _books.add(book);
+            widget.storage.writeBooks(_books);
+            hasScanned = false;
+            Navigator.of(context).pop();
+          },
+          () {
+            _isbnSet.remove(code);
+            hasScanned = false;
+            Navigator.of(context).pop();
+          }
+          );
+        else
+          showBasicDialog(context, "No book found", "No book was found for the ISBN \"$code\"",
+            onOkPressed: () {
+              hasScanned = false;
+              _isbnSet.remove(code);
+              Navigator.of(context).pop();
+            });
       });
       return;
     }
@@ -75,7 +96,7 @@ class _BardcodeScanner extends State<BardcodeScanner>{
           hasScanned = false;
           Navigator.of(context).pop();
         }
-        );
+      );
     }
     catch (e)
     {
@@ -131,7 +152,7 @@ class _BardcodeScanner extends State<BardcodeScanner>{
     if (!_isbnSet.contains(code))
     {
       _isbnSet.add(code);
-      getBookData(code).then( (response) {
+      getGoogleBookData(code).then( (response) {
         _confirmAddition(code, response);
       });
     }

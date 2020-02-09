@@ -6,6 +6,13 @@ const Map<int, String> ISBN_type = {
   13 : "ISBN_13"
 };
 
+getGoogleThumbnail(String isbn){
+  return "https://books.google.com/books/content?vid=ISBN" + isbn + "&printsec=frontcover&img=1&zoom=1";
+}
+getOpenLibraryThumbnail(String isbn){
+  return "http://covers.openlibrary.org/b/isbn/" + isbn +"-L.jpg";
+}
+
 class ISBN{
   ISBN(String isbn)
   {
@@ -52,7 +59,8 @@ class Book implements Comparable<Book>{
   String getAuthors() { return this.authors.toString().replaceAll('[', '').replaceAll(']', ''); }
   String getVolumeNumber() { return this.volumeNumber == null ? '' : this.volumeNumber.toString(); }
   String getPageCount() { return this.pageCount == null ? '' : this.pageCount.toString(); }
-  String getBookType() { return this.bookType == null || this.bookType == 'Not Defined' ? '' : this.bookType; }
+  String getLanguage() { return this.language == null || this.language == '' ? 'Not Defined' : this.bookType; }
+  String getBookType() { return this.bookType == null || this.bookType == '' ? 'Not Defined' : this.bookType; }
 
   void setIdentifier(String identifier) { this.identifier.identifier = identifier; }
   void setAuthors(String authors) { this.authors = authors.split(','); }
@@ -90,18 +98,79 @@ class Book implements Comparable<Book>{
       volumeNumber  = volumeInfo['volumeNumber'];
     if (volumeInfo["authors"] != null)
       authors       = new List<String>.from(volumeInfo["authors"]);
+    else
+      authors = new List<String>();
     if (volumeInfo["publisher"] != null)
       publisher     = volumeInfo["publisher"];
+    else
+      this.publisher = '';
     if (volumeInfo["publishedDate"] != null)
       publishedDate = volumeInfo["publishedDate"];
+    else
+      this.publishedDate = '';
     if (volumeInfo["description"] != null)
       description   = volumeInfo["description"];
+    else
+      this.description = '';
     if (volumeInfo["pageCount"] != null)
       pageCount     = volumeInfo["pageCount"];
-    if (volumeInfo["imageLinks"] != null)
-      thumbnail     = volumeInfo["imageLinks"]["thumbnail"].replaceAll("&edge=curl", "");
     if (volumeInfo["language"] != null)
       language      = volumeInfo["language"];
+    else
+      this.language = '';
+    
+    thumbnail     = getGoogleThumbnail(getIdentifier());
+  }
+
+  Book.fromOpenLibraryJson(Map<String, dynamic> openLibraryObj) {
+    if (openLibraryObj["details"] == null)
+     throw Error();
+
+    final Map<String, dynamic> details = openLibraryObj["details"];
+
+    this.id = Uuid().v4();
+    
+    if (details["title"] != null)
+      this.title = details["title"];
+    if (details["isbn_13"] != null)
+      this.setIdentifier(details['isbn_13'][0]);
+    
+    List<String> authors = new List<String>();
+    if (details["authors"] != null)
+      details["authors"].forEach ( (v) {
+        authors.add(v["name"]);
+      });
+    this.authors = authors;
+    
+    if (details["publishers"] != null)
+      this.publisher     = details["publishers"][0];
+    else
+      this.publisher = '';
+    
+    if (details["publish_date"] != null)
+      this.publishedDate = details["publish_date"];
+    else
+      this.publishedDate = '';
+
+    if (details["description"] != null)
+      this.description   = details["description"]["value"];
+    else
+      this.description = '';
+
+    if (details["number_of_pages"] != null)
+      this.pageCount     = details["number_of_pages"];
+    
+    if (details["languages"] != null) {
+      List<String> languages = new List<String>();
+      details["languages"].forEach ( (v) {
+        languages.add(v["key"]);
+      });
+      this.language = language.toString();
+    }
+    else
+      this.language = '';
+
+    this.thumbnail = getOpenLibraryThumbnail(this.getIdentifier());
   }
 
   Book.fromJson(Map<String, dynamic> json) : 

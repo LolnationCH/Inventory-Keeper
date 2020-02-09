@@ -49,7 +49,7 @@ class _BookWidget extends State<BookWidget>
     ),
     Align(
       alignment: Alignment.centerLeft,
-      child: Text('Language : ' + bookShown.language, style: TextStyle(fontSize: 25))
+      child: Text('Language : ' + bookShown.getLanguage(), style: TextStyle(fontSize: 25))
     ),
     Align(
       alignment: Alignment.centerLeft,
