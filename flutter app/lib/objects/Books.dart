@@ -74,7 +74,7 @@ class Book implements Comparable<Book>{
     bookType = '';
   }
 
-  Book.fromJsonWeb(Map<String, dynamic> jsonItem) {
+  Book.fromGoogleBookJson(Map<String, dynamic> jsonItem) {
     dynamic volumeInfo = jsonItem["volumeInfo"];
 
     dynamic industryIdentifiers = volumeInfo["industryIdentifiers"];
@@ -102,46 +102,6 @@ class Book implements Comparable<Book>{
       thumbnail     = volumeInfo["imageLinks"]["thumbnail"].replaceAll("&edge=curl", "");
     if (volumeInfo["language"] != null)
       language      = volumeInfo["language"];
-  }
-
-  Book.fromRawJsonWeb(String isbn, Map<String, dynamic> jsonResponse) {
-    identifier = new ISBN(isbn);
-
-    dynamic items = jsonResponse['items'];
-    dynamic book;
-    for (int i =0; i < items.length; i++)
-    {
-      dynamic volumeInfo = items[i]["volumeInfo"];
-      dynamic industryIdentifiers = volumeInfo["industryIdentifiers"];
-      for (int j = 0; j < industryIdentifiers.length; j++)
-      {
-        if (industryIdentifiers[j]["type"] == identifier.getISBNType() &&
-            industryIdentifiers[j]["identifier"] == identifier.identifier)
-          book = items[i];
-      }
-    }
-    if (book != null)
-    {
-      dynamic volumeInfo = book["volumeInfo"];
-      id = Uuid().v4();
-      title           = volumeInfo["title"];
-      if (volumeInfo["volumeNumber"] != null)
-        volumeNumber  = volumeInfo['volumeNumber'];
-      if (volumeInfo["authors"] != null)
-        authors       = new List<String>.from(volumeInfo["authors"]);
-      if (volumeInfo["publisher"] != null)
-        publisher     = volumeInfo["publisher"];
-      if (volumeInfo["publishedDate"] != null)
-        publishedDate = volumeInfo["publishedDate"];
-      if (volumeInfo["description"] != null)
-        description   = volumeInfo["description"];
-      if (volumeInfo["pageCount"] != null)
-        pageCount     = volumeInfo["pageCount"];
-      if (volumeInfo["imageLinks"] != null)
-        thumbnail     = volumeInfo["imageLinks"]["thumbnail"].replaceAll("&edge=curl", "");
-      if (volumeInfo["language"] != null)
-        language      = volumeInfo["language"];
-    }
   }
 
   Book.fromJson(Map<String, dynamic> json) : 
@@ -187,12 +147,12 @@ class Book implements Comparable<Book>{
   }
 }
 
-List<Book> getFromRawJsonWeb(Map<String, dynamic> jsonResponse) {
+List<Book> getFromGoogleBookJson(Map<String, dynamic> jsonResponse) {
   List<Book> books = new List<Book>();
   dynamic items = jsonResponse['items'];
   for (int i =0; i < items.length; i++)
   {
-    books.add(Book.fromJsonWeb(items[i]));
+    books.add(Book.fromGoogleBookJson(items[i]));
   }
   return books;
 }

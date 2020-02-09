@@ -59,13 +59,29 @@ class _BardcodeScanner extends State<BardcodeScanner>{
       return;
     }
 
-    Book temp = Book.fromRawJsonWeb(code, response);
-    
-    if (temp.title == null)
+    List<Book> books = getFromGoogleBookJson(response);
+    try
+    {
+      Book book = books.singleWhere( (x) => x.getIdentifier() == code);
+      showChoiceDialog(context, "Add book to catalog", "Are you sure you want to add ${book.title} to your catalog?",
+        () {
+          _books.add(book);
+          widget.storage.writeBooks(_books);
+          hasScanned = false;
+          Navigator.of(context).pop();
+        },
+        () {
+          _isbnSet.remove(code);
+          hasScanned = false;
+          Navigator.of(context).pop();
+        }
+        );
+    }
+    catch (e)
     {
       Navigator.push(
         context, 
-        MaterialPageRoute(builder: (context) => BookSelector(books: getFromRawJsonWeb(response))),
+        MaterialPageRoute(builder: (context) => BookSelector(books: books)),
       ).then((result) {
         if (result != null)
         {
@@ -79,21 +95,6 @@ class _BardcodeScanner extends State<BardcodeScanner>{
         hasScanned = false;
         Navigator.of(context).pop();
       });
-    }
-    else {
-      showChoiceDialog(context, "Add book to catalog", "Are you sure you want to add ${temp.title} to your catalog?",
-       () {
-        _books.add(temp);
-        widget.storage.writeBooks(_books);
-        hasScanned = false;
-        Navigator.of(context).pop();
-       },
-       () {
-        _isbnSet.remove(code);
-        hasScanned = false;
-        Navigator.of(context).pop();
-       }
-      );
     }
   }
 
