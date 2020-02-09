@@ -65,7 +65,7 @@ export class HomePage extends React.Component<any, any>{
     )
   }
   _serverConnectionStatus(): any{
-    TestConnection(getUrlServer()).then( () => {
+    TestConnection(getUrlServer() + "/api").then( () => {
       this.setState({
         serverConnectionStatus: this._getOkConnectionStatusDiv("Server Connection")
       })

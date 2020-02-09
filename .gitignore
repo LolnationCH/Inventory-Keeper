@@ -3,3 +3,4 @@
 
 server/data.json
 desktop_client/dist/**
+server/public/**

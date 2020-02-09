@@ -16,6 +16,8 @@ var bookRoute = require('./bookRoute');
 
 app.use('/api/books', bookRoute);
 
-app.get('/', function (req, res) {
+app.get('/api', function (req, res) {
   res.send('Server online')
 })
+
+app.use(express.static(__dirname + '/public'));
