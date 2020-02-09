@@ -19,30 +19,8 @@ class _CatalogWidget extends State<CatalogWidget>
   List<Book> _books;
   List<BookContainer> _booksContainer;
 
-  Map<String, bool> sortAscMap = {
-    "title" : false,
-    "language" : false,
-    "bookType" : false
-  };
-  String lastHit = "title";
-
-  bool allFalseSort() => sortAscMap.values.where((val) => val == true).length == 0;
-
-  void sortBookByPropsAsc(String props){
-    _books.sort((a, b) => a.toJson()[props].compareTo(b.toJson()[props]));
-    setupBooksContainer();
-  }
-
-  void sortBookByPropsDsc(String props){
-    _books.sort((b, a) => a.toJson()[props].compareTo(b.toJson()[props]));
-    setupBooksContainer();
-  }
-
-  void _sortByProps(bool condition, String props) {
-    if (condition)
-      sortBookByPropsDsc(props);
-    else
-      sortBookByPropsAsc(props);
+  void _sortBooks() {
+    _books.sort( (a, b) => a.compareTo(b));
   }
 
   void setupBooksContainer(){
@@ -50,28 +28,12 @@ class _CatalogWidget extends State<CatalogWidget>
     if (_books == null) return;
     for (int i = 0; i < _books.length; i++)
       _booksContainer.add(new BookContainer(info : _books[i], refreshFunc: (){
-        initBooks();
-        _sortByProps(sortAscMap['title']   , "title");
-        _sortByProps(sortAscMap['language'], "language");
-        _sortByProps(sortAscMap['bookType'], "bookType");
+        init();
       }));
 
     setState(() {
       _booksContainer  =_booksContainer;
     });
-  }
-
-  void initBooks() async{
-    dynamic books = await widget.storage.readBooks();
-    if (books == null || books.length == 0)
-      _books = new List<Book>();
-    else{
-      _books = new List<Book>();
-      for (int i = 0; i< books.length; i++)
-        _books.add(Book.fromJson(books[i]));
-    }
-
-    setupBooksContainer();
   }
 
   void init() async{
@@ -82,9 +44,9 @@ class _CatalogWidget extends State<CatalogWidget>
       _books = new List<Book>();
       for (int i = 0; i< books.length; i++)
         _books.add(Book.fromJson(books[i]));
+      _sortBooks();
+      setupBooksContainer();
     }
-
-    sortBookByPropsAsc("title");
   }
 
   @override
@@ -129,36 +91,7 @@ class _CatalogWidget extends State<CatalogWidget>
 
   AppBar createAppBar(){
     return AppBar(
-      title: Text(title + " (${_booksContainer.length})"),
-      actions: <Widget>[
-        DropdownButton<String>(
-          value: allFalseSort() ? "title" : lastHit,
-          onChanged: (String selectedValue) {
-            setState(() {
-              sortAscMap[selectedValue] = !sortAscMap[selectedValue];
-              lastHit = selectedValue;
-              _sortByProps(sortAscMap[selectedValue], selectedValue);
-            });
-          },
-          items: sortAscMap.keys.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(
-                    Icons.check,
-                    color: sortAscMap[value] ? null : Colors.transparent,
-                  ),
-                  SizedBox(width: 16),
-                  Text(value),
-                ],
-              ),
-            );
-            })
-            .toList(),
-        ),
-      ],
+      title: Text(title + " (${_booksContainer.length})")
     );
   }
 

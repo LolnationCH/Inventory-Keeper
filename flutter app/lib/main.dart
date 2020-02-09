@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_keeper/view/bookWidgetEditor.dart';
+import 'package:localstorage/localstorage.dart';
 
 import 'dialogs.dart';
 import 'objects/Books.dart';
@@ -33,6 +34,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  
+  final LocalStorage settingsStorage = new LocalStorage('settings');
+  TextEditingController _textFieldServerUrlController = TextEditingController();
   
   JsonStorage storage = new JsonStorage();
 
@@ -192,6 +196,51 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: () {
           Navigator.pop(context);
           _deleteConfirmationDialog();
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.settings),
+        title: Text('Settings'),
+        onTap: () {
+          _textFieldServerUrlController.text = settingsStorage.getItem('serverUrl');
+          Navigator.pop(context);
+          return showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: new Text("Settings"),
+                content: TextField(
+                    controller: _textFieldServerUrlController,
+                    decoration: InputDecoration(hintText: "Server url"),
+                  ),
+                actions: <Widget>[
+                  new FlatButton(
+                    color: Colors.green,
+                    textColor: Colors.white,
+                    disabledColor: Colors.grey,
+                    disabledTextColor: Colors.black,
+                    padding: EdgeInsets.all(8.0),
+                    child: new Text('Save'),
+                    onPressed: () {
+                      settingsStorage.setItem('serverUrl', _textFieldServerUrlController.text);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new FlatButton(
+                    color: Colors.red,
+                    textColor: Colors.white,
+                    disabledColor: Colors.grey,
+                    disabledTextColor: Colors.black,
+                    padding: EdgeInsets.all(8.0),
+                    child: new Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         },
       ),
     ]

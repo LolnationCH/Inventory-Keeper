@@ -34,7 +34,7 @@ class ISBN{
   };
 }
 
-class Book{
+class Book implements Comparable<Book>{
   String id;
   String title;
   int volumeNumber;
@@ -52,7 +52,7 @@ class Book{
   String getAuthors() { return this.authors.toString().replaceAll('[', '').replaceAll(']', ''); }
   String getVolumeNumber() { return this.volumeNumber == null ? '' : this.volumeNumber.toString(); }
   String getPageCount() { return this.pageCount == null ? '' : this.pageCount.toString(); }
-  String getBookType() { return this.bookType == '' ? 'Not defined' : this.bookType; }
+  String getBookType() { return this.bookType == null || this.bookType == 'Not Defined' ? '' : this.bookType; }
 
   void setIdentifier(String identifier) { this.identifier.identifier = identifier; }
   void setAuthors(String authors) { this.authors = authors.split(','); }
@@ -172,6 +172,19 @@ class Book{
     'language':      language,
     'bookType':      bookType,
   };
+
+  @override
+  int compareTo(Book other) {
+    var sortNumber = 0;
+    if (title != null && other.title != null)
+      sortNumber = title.compareTo(other.title);
+    if (sortNumber == 0 && bookType != null && other.bookType != null)
+      sortNumber = bookType.compareTo(other.bookType);
+    if (sortNumber == 0 && volumeNumber != null && other.volumeNumber != null)
+      sortNumber = volumeNumber.compareTo(other.volumeNumber);
+       
+    return sortNumber;
+  }
 }
 
 List<Book> getFromRawJsonWeb(Map<String, dynamic> jsonResponse) {

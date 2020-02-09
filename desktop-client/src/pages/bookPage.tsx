@@ -193,16 +193,18 @@ export class BookPage extends React.Component<any, any> {
       return;
     }
 
+    var authors = Array.isArray(this.state.authors)? this.state.authors : [this.state.authors];
+
     var book = new Book();
     book.SetBase(
       this.state.title,
-      this.state.volumeNumber,
-      this.state.authors,
+      +this.state.volumeNumber,
+      authors,
       this.state.publisher,
       this.state.publishedDate,
       this.state.description,
       new Identifier(),
-      this.state.pageCount,
+      +this.state.pageCount,
       this.state.thumbnail,
       this.state.language,
       this.state.type,
