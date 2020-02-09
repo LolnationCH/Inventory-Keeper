@@ -4,6 +4,7 @@
 }
 
 .homePageInfoDiv {
+  color: white !important;
   font-size: large;
   text-align: left;
 }

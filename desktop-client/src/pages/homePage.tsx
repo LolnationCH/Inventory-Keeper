@@ -28,7 +28,7 @@ export class HomePage extends React.Component<any, any>{
   constructor(props:any) {
     super(props);
     this.state = {
-      serverConnectionStatusDiv: this._getNoConnectionStatusDiv("Server Connection")
+      serverConnectionStatus: this._getNoConnectionStatusDiv("Server Connection")
     }
 
     this._serverConnectionStatus = this._serverConnectionStatus.bind(this);

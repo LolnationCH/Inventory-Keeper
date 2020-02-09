@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import { Link } from "react-router-dom";
 
 /* ICONS */
@@ -30,6 +29,7 @@ function GetIconButton(text: String, icon: JSX.Element, page: string) {
   return (
     <Button
       fullWidth={true}
+      style={{color:"white", backgroundColor:"rgb(33, 35, 37)"}}
       variant="contained"
       startIcon={icon}
       component={Link}
@@ -43,6 +43,7 @@ function GetIconButtonSmall(icon: JSX.Element, page: string) {
   return (
     <Button
       variant="contained"
+      style={{color:"white", backgroundColor:"rgb(33, 35, 37)"}}
       startIcon={icon}
       component={Link}
       to={page}>

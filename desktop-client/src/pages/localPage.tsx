@@ -12,7 +12,9 @@ var fileDownload = require('js-file-download');
 const DownloadButtonStyle = {
   style : {
     paddingBottom:"20px",
-    paddingTop:"15px"
+    paddingTop:"15px",
+    color:"white",
+    backgroundColor:"rgb(33, 35, 37)",
   },
   fullWidth: true,
 }
@@ -21,7 +23,9 @@ const UploadButtonStyle = {
   style : {
     marginTop:"10px",
     paddingBottom:"20px",
-    paddingTop:"15px"
+    paddingTop:"15px",
+    color:"white",
+    backgroundColor:"rgb(33, 35, 37)",
   },
   fullWidth: true,
 }
@@ -29,8 +33,8 @@ const UploadButtonStyle = {
 const DropZoneDivStyle = {
   style : {
     marginTop:"10px",
-    border: '1px solid black',
-    color: 'black'
+    border: '1px solid white',
+    color: 'white'
   }
 };
 

@@ -15,9 +15,28 @@ export enum BookPageModes {
   FIX
 }
 
+const ButtonProps = {
+  style : {
+    marginBottom:"20px",
+    marginTop:"15px",
+  },
+  fullWidth: true,
+  variant: "contained" as "contained"
+}
+
+const ButtonSaveProps = {
+  style : {
+    marginBottom:"20px",
+    marginTop:"15px",
+    color:"white", 
+    backgroundColor:"rgb(33, 35, 37)",
+  },
+  fullWidth: true,
+  variant: "contained" as "contained"
+}
+
 export class BookPage extends React.Component<any, any> {
   TextFieldProps : any;
-  ButtonSaveProps : any;
   OriginalBook: Book = new Book();
 
   constructor(props: any) {
@@ -52,15 +71,6 @@ export class BookPage extends React.Component<any, any> {
       onChange: this._handleTextFieldChange,
       variant: "outlined" as "outlined"
     };
-
-    this.ButtonSaveProps = {
-      style : {
-        marginBottom:"20px",
-        marginTop:"15px"
-      },
-      fullWidth: true,
-      variant: "contained" as "contained"
-    }
   }
 
   _setStateWithBook(book: Book) {
@@ -131,19 +141,19 @@ export class BookPage extends React.Component<any, any> {
           />
         </Grid>
         <Grid item xs={2}>
-          <Button {...this.ButtonSaveProps} color="primary" onClick={this._searchForBook}>
+          <Button {...ButtonProps} color="primary" onClick={this._searchForBook}>
             <SearchIcon />
             &nbsp;Search
           </Button>
         </Grid>
         <Grid item xs={2}>
-          <Button {...this.ButtonSaveProps} color="default" onClick={this._saveBook}>
+          <Button {...ButtonSaveProps} onClick={this._saveBook}>
             <SaveIcon />
             &nbsp;Save
           </Button>
         </Grid>
         <Grid item xs={2}>
-          <Button {...this.ButtonSaveProps} color="secondary" onClick={this._deleteBook}>
+          <Button {...ButtonProps} color="secondary" onClick={this._deleteBook}>
             <SaveIcon />
             &nbsp;Delete
           </Button>
@@ -354,7 +364,14 @@ export class BookPage extends React.Component<any, any> {
         <Grid item style={{paddingRight:"30px"}}>
           <img className="Big-thumbnail" style={{marginBottom:"20px"}} src={this.state.thumbnail || ''} alt={this.state.title || ''}/>
           <TextField multiline={true}  {...this.TextFieldProps} id="thumbnail" label="Thumbnail" value={this.state.thumbnail || ''}/>
-          <Button fullWidth={true} variant={"contained"} onClick={this._handleSwitchThumbnail}>Switch to OpenLibrary Covers</Button>
+          <Button 
+            style={{color:"white", backgroundColor:"rgb(33, 35, 37)"}} 
+            fullWidth={true} 
+            variant={"contained"} 
+            onClick={this._handleSwitchThumbnail}
+          >
+            Switch to OpenLibrary Covers
+          </Button>
         </Grid>
         <Grid item xs>
           <TextField {...this.TextFieldProps} disabled={IsDisabled} id="title"         label="Title"                     value={this.state.title || ''}/>

@@ -35,6 +35,7 @@ export class LeftActionBar extends React.Component<any,any> {
     return (
       <div>
         <Button 
+          style={{color:"white", backgroundColor:"rgb(33, 35, 37)"}}
           fullWidth={true}
           variant="contained"
           onClick={() => {this.setState({smallVersion:!this.state.smallVersion})}}>
