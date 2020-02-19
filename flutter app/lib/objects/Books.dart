@@ -59,7 +59,7 @@ class Book implements Comparable<Book>{
   String getAuthors() { return this.authors.toString().replaceAll('[', '').replaceAll(']', ''); }
   String getVolumeNumber() { return this.volumeNumber == null ? '' : this.volumeNumber.toString(); }
   String getPageCount() { return this.pageCount == null ? '' : this.pageCount.toString(); }
-  String getLanguage() { return this.language == null || this.language == '' ? 'Not Defined' : this.bookType; }
+  String getLanguage() { return this.language == null || this.language == '' ? 'Not Defined' : this.language; }
   String getBookType() { return this.bookType == null || this.bookType == '' ? 'Not Defined' : this.bookType; }
 
   void setIdentifier(String identifier) { this.identifier.identifier = identifier; }
