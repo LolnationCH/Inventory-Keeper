@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.listen(port);
 
-console.log('todo list RESTful API server started on: ' + port);
+console.log('Inventory Keeper Server started on port : ' + port);
 
 var bookRoute = require('./bookRoute');
 
