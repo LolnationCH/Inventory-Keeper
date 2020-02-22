@@ -28,8 +28,6 @@ import {
 } from "../data/book";
 import { GetBooks } from "./catalogFunctions";
 
-import { matchPath } from 'react-router'
-
 export enum BookPageModes {
   EMPTY,
   EDITING,
@@ -306,7 +304,6 @@ export class BookPage extends React.Component<any, any> {
 
         // Couldn't find the book
         if (!bookFound || bookFound === undefined) {
-          console.log(bookFound);
           return Promise.reject();
         }
         else {
@@ -389,7 +386,7 @@ export class BookPage extends React.Component<any, any> {
         var book = books[index-1];
         this.props.history.push(`/books/${book.identifier.identifier}`);
         this.OriginalBook = book;
-        this._partialSetStateWithBook(book);
+        this._setStateWithBook(book);
       }
     });
   }
@@ -400,11 +397,11 @@ export class BookPage extends React.Component<any, any> {
         console.log(this.OriginalBook.identifier.identifier);
         return element.identifier.identifier === this.OriginalBook.identifier.identifier;
       });
-      if (index < books.length){
+      if (index < books.length - 1){
         var book = books[index+1];
         this.props.history.push(`/books/${book.identifier.identifier}`);
         this.OriginalBook = book;
-        this._partialSetStateWithBook(book);
+        this._setStateWithBook(book);
       }
     });
   }
@@ -421,6 +418,31 @@ export class BookPage extends React.Component<any, any> {
     );
   }
 
+  getButtonCover() {
+    if (IsOpenLibraryThumbnail(this.state.thumbnail))
+      return (
+          <Button 
+            style={{color:"white", backgroundColor:"#4285F4"}} 
+            fullWidth={true} 
+            variant={"contained"} 
+            onClick={this._handleSwitchThumbnail}
+          >
+            Switch to Google Books Covers
+          </Button>
+      );
+    else
+      return (
+        <Button 
+          style={{color:"black", backgroundColor:"#e1dcc5"}} 
+          fullWidth={true} 
+          variant={"contained"} 
+          onClick={this._handleSwitchThumbnail}
+        >
+          Switch to OpenLibrary Covers
+        </Button>
+    );
+  }
+
   render() {
     const IsDisabled = this.props.Mode === BookPageModes.FIX;
 
@@ -431,15 +453,24 @@ export class BookPage extends React.Component<any, any> {
         <Grid item style={{paddingRight:"30px"}} xs={5}>
           {this.getThumbnail()}
           <TextField multiline={true}  {...this.TextFieldProps} id="thumbnail" label="Thumbnail" value={this.state.thumbnail || ''}/>
+          {this.getButtonCover()}
+          <p/>
           <Button 
-            style={{color:"white", backgroundColor:"rgb(33, 35, 37)"}} 
+            style={{color:"white", backgroundColor:"#E37151"}} 
             fullWidth={true} 
             variant={"contained"} 
-            onClick={this._handleSwitchThumbnail}
+            onClick={() => window.open(`https://duckduckgo.com/?q=${this.state.identifier}&t=h_&iax=images&ia=images`, '_blank')}
           >
-            Switch to&nbsp;
-            {IsOpenLibraryThumbnail(this.state.thumbnail)? "Google Book" : "OpenLibrary" }
-            &nbsp;Covers
+            Search with DuckDuckGo
+          </Button>
+          <p/>
+          <Button 
+            style={{color:"white", backgroundColor:"#DB4437"}} 
+            fullWidth={true} 
+            variant={"contained"} 
+            onClick={() => window.open(`https://www.google.com/search?tbm=isch&q=${this.state.identifier}`, '_blank')}
+          >
+            Search with Google
           </Button>
         </Grid>
         <Grid item xs>

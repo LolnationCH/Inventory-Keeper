@@ -1,9 +1,9 @@
 import * as React from "react";
-import { GridList, GridListTile, Button, Grid, TextField } from "@material-ui/core";
+import { GridList, GridListTile, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import { Book, Identifier } from "../data/book";
-import { GetBooksData, SendBooksData } from "../queries/BookQuery";
+import { Book } from "../data/book";
+import { GetBooksData } from "../queries/BookQuery";
 
 
 export function GetBooksGridList(Books: Array<Book>) {
