@@ -6,6 +6,7 @@ import SearchBar from 'material-ui-search-bar'
 import { Book } from "../data/book";
 import { GridList, GridListTile, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import { SortBooksByFilters } from "./catalogFunctions";
 
 
 type CatalogPageSate = {
@@ -35,28 +36,6 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
     });
   }
 
-  SortBooksByFilters(booksArr: Array<Book>){
-    var books = booksArr;
-
-    books.sort( (a:Book,b:Book) => {
-      var sortNumber = 0;
-
-      if (a.title !== undefined && b.title !== undefined)
-        sortNumber = a.title < b.title ? -1: a.title > b.title ? 1 : 0;
-
-      if (sortNumber === 0 && a.type !== undefined && b.type !== undefined)
-        sortNumber = a.type < b.type ? -1 : a.type > b.type ? 1 : 0;
-
-      if (sortNumber === 0 && a.volumeNumber !== undefined && b.volumeNumber !== undefined)
-        sortNumber = a.volumeNumber < b.volumeNumber ? -1 : a.volumeNumber > b.volumeNumber ? 1 : 0;
-        
-
-      return sortNumber;
-    });
-
-    return books
-  }
-
   GetBooksToShow() : Promise<Array<Book>> {
     return GetBooksData().then( (Data:any) => {
       const searchQuery = this.state.searchValue.toLowerCase();
@@ -67,7 +46,7 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
           return item.title?.toLowerCase().includes(searchQuery);
         });
       }
-      return this.SortBooksByFilters(books);
+      return SortBooksByFilters(books);
     });
   }
 

@@ -1,13 +1,34 @@
 import * as React from "react";
-import { TextField, Grid, Button } from "@material-ui/core";
+import { TextField, Grid, Button, IconButton } from "@material-ui/core";
 import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
 
 import SaveIcon from '@material-ui/icons/Save';
 import SearchIcon from '@material-ui/icons/Search';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
-import { GetBooksData, SendBooksData, GetBookDataFromGoogle, GetBookDataFromOpenLibraryApi } from "../queries/BookQuery";
-import { Book, parseFromGoogleJson, Identifier, parseFromOpenLibraryJson, GetGoogleThumbnail, IsOpenLibraryThumbnail, GetOpenLibraryThumbnail } from "../data/book";
-import { toast } from "react-toastify";
+// Book Query Imports
+import {
+  GetBooksData,
+  SendBooksData,
+  GetBookDataFromGoogle,
+  GetBookDataFromOpenLibraryApi
+} from "../queries/BookQuery";
+
+// Book Object Imports
+import { 
+  Book,
+  Identifier,
+  parseFromGoogleJson,
+  parseFromOpenLibraryJson,
+  GetGoogleThumbnail,
+  GetOpenLibraryThumbnail,
+  IsOpenLibraryThumbnail
+} from "../data/book";
+import { GetBooks } from "./catalogFunctions";
+
+import { matchPath } from 'react-router'
 
 export enum BookPageModes {
   EMPTY,
@@ -64,6 +85,8 @@ export class BookPage extends React.Component<any, any> {
     this._saveBook = this._saveBook.bind(this);
     this._searchForBook = this._searchForBook.bind(this);
     this._deleteBook = this._deleteBook.bind(this);
+    this.OnBackClick = this.OnBackClick.bind(this);
+    this.OnForwardClick = this.OnForwardClick.bind(this);
 
     this.TextFieldProps = {
       style : {marginBottom:"20px", marginTop:"5px"},
@@ -107,6 +130,7 @@ export class BookPage extends React.Component<any, any> {
     // Get all the books
     GetBooksData().then( (books : Array<Book>) => {
       var id = this.props.match.params.id;
+      console.log(id);
 
       // Find the book required with the ISBN
       var book = books.find(function(item: Book) {
@@ -240,6 +264,7 @@ export class BookPage extends React.Component<any, any> {
         items.push(book);
         SendBooksData(items,"Changes saved");
       }
+      this.props.history.push(`/books/${book.identifier.identifier}`);
       this.OriginalBook = book;
     });
   }
@@ -354,6 +379,48 @@ export class BookPage extends React.Component<any, any> {
     .catch( () => {});
   }
 
+  OnBackClick() {
+    GetBooks().then( (books: Array<Book>) => {
+      var index = books.findIndex((element:Book) => {
+        console.log(this.OriginalBook.identifier.identifier);
+        return element.identifier.identifier === this.OriginalBook.identifier.identifier;
+      });
+      if (index > 0){
+        var book = books[index-1];
+        this.props.history.push(`/books/${book.identifier.identifier}`);
+        this.OriginalBook = book;
+        this._partialSetStateWithBook(book);
+      }
+    });
+  }
+
+  OnForwardClick() {
+    GetBooks().then( (books: Array<Book>) => {
+      var index = books.findIndex((element:Book) => {
+        console.log(this.OriginalBook.identifier.identifier);
+        return element.identifier.identifier === this.OriginalBook.identifier.identifier;
+      });
+      if (index < books.length){
+        var book = books[index+1];
+        this.props.history.push(`/books/${book.identifier.identifier}`);
+        this.OriginalBook = book;
+        this._partialSetStateWithBook(book);
+      }
+    });
+  }
+
+  getThumbnail() {
+    return (
+      <Grid container spacing={0} justify="center">
+        <Grid item xs>
+          <IconButton onClick={this.OnBackClick}><ArrowBackIosIcon/></IconButton>
+          <img className="Big-thumbnail" style={{marginBottom:"20px"}} src={this.state.thumbnail || ''} alt={this.state.title || ''}/>
+          <IconButton onClick={this.OnForwardClick}><ArrowForwardIosIcon/></IconButton>
+        </Grid>
+      </Grid>
+    );
+  }
+
   render() {
     const IsDisabled = this.props.Mode === BookPageModes.FIX;
 
@@ -361,8 +428,8 @@ export class BookPage extends React.Component<any, any> {
     <div>
       {this._createTopBar(this.props.Mode)}
       <Grid container spacing={0}>
-        <Grid item style={{paddingRight:"30px"}}>
-          <img className="Big-thumbnail" style={{marginBottom:"20px"}} src={this.state.thumbnail || ''} alt={this.state.title || ''}/>
+        <Grid item style={{paddingRight:"30px"}} xs={5}>
+          {this.getThumbnail()}
           <TextField multiline={true}  {...this.TextFieldProps} id="thumbnail" label="Thumbnail" value={this.state.thumbnail || ''}/>
           <Button 
             style={{color:"white", backgroundColor:"rgb(33, 35, 37)"}} 
@@ -370,7 +437,9 @@ export class BookPage extends React.Component<any, any> {
             variant={"contained"} 
             onClick={this._handleSwitchThumbnail}
           >
-            Switch to OpenLibrary Covers
+            Switch to&nbsp;
+            {IsOpenLibraryThumbnail(this.state.thumbnail)? "Google Book" : "OpenLibrary" }
+            &nbsp;Covers
           </Button>
         </Grid>
         <Grid item xs>

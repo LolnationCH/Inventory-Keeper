@@ -22,6 +22,33 @@ export function GetBooksGridList(Books: Array<Book>) {
   )
 }
 
+export function SortBooksByFilters(booksArr: Array<Book>){
+  var books = booksArr;
+
+  books.sort( (a:Book,b:Book) => {
+    var sortNumber = 0;
+
+    if (a.title !== undefined && b.title !== undefined)
+      sortNumber = a.title < b.title ? -1: a.title > b.title ? 1 : 0;
+
+    if (sortNumber === 0 && a.type !== undefined && b.type !== undefined)
+      sortNumber = a.type < b.type ? -1 : a.type > b.type ? 1 : 0;
+
+    if (sortNumber === 0 && a.volumeNumber !== undefined && b.volumeNumber !== undefined)
+      sortNumber = a.volumeNumber < b.volumeNumber ? -1 : a.volumeNumber > b.volumeNumber ? 1 : 0;
+      
+
+    return sortNumber;
+  });
+
+  return books
+}
+
+export function GetBooks(){
+  return GetBooksData().then( (Data:any) => {
+    return SortBooksByFilters(Data);
+  });
+}
 
 // Quick fix in case book get corrupted
 function quickFix(data: Array<Book>){

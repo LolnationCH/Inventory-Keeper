@@ -60,7 +60,7 @@ const App: React.FC = () => {
                   <Route exact path="/settings">
                     <SettingsPage/>
                   </Route>
-                  <Route path="/books/:id" component={EditBookPage} />
+                  <Route path="/books/:id" component={withRouter(EditBookPage)} />
                   <Route path="/books/" component={withRouter(EmptyBookPage)} />
                 </Switch>
               </div>
