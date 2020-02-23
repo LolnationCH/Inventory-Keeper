@@ -3,7 +3,10 @@ import "./homePage.css"
 
 // @ts-ignore
 import { Offline, Online } from "react-detect-offline";
-import { TestConnection, getUrlServer } from "../queries/BookQuery";
+import { TestConnection, getUrlServer, GetBooksData } from "../queries/BookQuery";
+import { GridList, GridListTile, Button, Grid } from "@material-ui/core";
+import { Book } from "../data/book";
+import { Link } from "react-router-dom";
 
 const homePageInfoStyleGreen = {
   style: {
@@ -23,16 +26,24 @@ const homePageInfoStyleRed = {
   }
 }
 
+const gridListStyle = {
+  style: {
+    flexWrap: 'nowrap' as 'nowrap',
+  }
+}
+
 export class HomePage extends React.Component<any, any>{
 
   constructor(props:any) {
     super(props);
     this.state = {
-      serverConnectionStatus: this._getNoConnectionStatusDiv("Server Connection")
+      serverConnectionStatus: this._getNoConnectionStatusDiv("Server Connection"),
+      Books: []
     }
 
     this._serverConnectionStatus = this._serverConnectionStatus.bind(this);
     this._internetConnectionStatus = this._internetConnectionStatus.bind(this);
+    this.GridLatestModifiedBooks = this.GridLatestModifiedBooks.bind(this);
   }
 
   _getNoConnectionStatusDiv(text: string) {
@@ -79,15 +90,54 @@ export class HomePage extends React.Component<any, any>{
 
   componentDidMount() {
     this._serverConnectionStatus();
+
+    GetBooksData().then( (Data:any) => {
+      this.setState({
+        Books: Data.reverse()
+      })
+    });
+  }
+
+  GridLatestModifiedBooks() {
+    return (
+      <div>
+        <Grid container>
+          <Grid item xs>
+            <h2>Lastest Modified or Added books : </h2>
+          </Grid>
+        </Grid>
+        <Grid container>
+          <Grid item xs>
+            <GridList {...gridListStyle} cols={7}>
+              {this.state.Books.splice(0, 8).map( function(item: Book){
+                return (
+                  <GridListTile key={item.id}>
+                    <Button component={Link} to={"/books/" + item.identifier.identifier}>
+                      <img className="BookCover" src={item.thumbnail} alt={item.title}/>
+                    </Button>
+                  </GridListTile>
+                )
+              })}
+            </GridList>
+          </Grid>
+        </Grid>
+      </div>
+    )
   }
 
   render(){
     return (
-      <div className="homePageDiv">
+      //<div className="homePageDiv">
+      <div>
         <h1>Inventory Keeper</h1>
-        {this._internetConnectionStatus()}
-        <p/>
-        {this.state.serverConnectionStatus}
+        <div>
+          {this._internetConnectionStatus()}
+          <p/>
+          {this.state.serverConnectionStatus}
+          <p/>
+        </div>
+        <hr/>
+        {this.GridLatestModifiedBooks()}
       </div>
     );
   }
