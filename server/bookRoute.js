@@ -2,8 +2,11 @@ var express = require('express'),
     router = express.Router();
 
 const jsonfile = require('jsonfile');
-const file = 'data.json'
+const file = 'data.json'; // "Database"
 
+// the route is => "api/books"
+
+// Get returns the book list
 router.get('/', (req, res) => {
   jsonfile.readFile(file)
   .then( bookArray => {
@@ -15,6 +18,7 @@ router.get('/', (req, res) => {
   });
 });
 
+// Post overwrite the database
 router.post('/', (req, res) => {
   jsonfile.writeFile(file, req.body)
     .then(result => {

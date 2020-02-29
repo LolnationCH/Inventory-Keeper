@@ -14,10 +14,12 @@ console.log('Inventory Keeper Server started on port : ' + port);
 
 var bookRoute = require('./bookRoute');
 
+// Set the api routes
 app.use('/api/books', bookRoute);
 
 app.get('/api', function (req, res) {
   res.send('Server online')
 })
 
+// Set the access point
 app.use(express.static(__dirname + '/public'));
