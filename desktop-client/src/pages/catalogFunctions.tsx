@@ -50,7 +50,9 @@ export function GetBooks(){
   });
 }
 
-// Quick fix in case book get corrupted
+
+/*
+// Quick fix in case books get corrupted
 function quickFix(data: Array<Book>){
   var Books = new Array<Book>();
   for (let dat of data){
@@ -71,4 +73,4 @@ function quickFix(data: Array<Book>){
     Books.push(book);
   }
   //SendBooksData(Books);
-}
+}*/

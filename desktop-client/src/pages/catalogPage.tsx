@@ -97,7 +97,7 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
     this.setState({ 
       width: window.innerWidth, 
       height: window.innerHeight, 
-      cols: Math.floor(((2*window.innerWidth)/3)/imageWidth),
+      cols: Math.ceil(((2*window.innerWidth)/3)/imageWidth),
       NeedRefresh: true,
     });
   }
