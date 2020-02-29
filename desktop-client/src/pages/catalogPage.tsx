@@ -4,7 +4,7 @@ import * as React from "react";
 import SearchBar from 'material-ui-search-bar'
 
 import { Book } from "../data/book";
-import { GridList, GridListTile, Button } from "@material-ui/core";
+import { GridList, GridListTile, Button, Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { SortBooksByFilters } from "./catalogFunctions";
 
@@ -129,9 +129,11 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
         {Books.map( function(item: Book){
           return (
             <GridListTile key={item.id}>
-              <Button component={Link} to={"/books/" + item.identifier.identifier}>
-                <img className="BookCover" src={item.thumbnail} alt={item.title}/>
-              </Button>
+              <Tooltip title={item.title} arrow>
+                <Button component={Link} to={"/books/" + item.identifier.identifier}>
+                  <img className="BookCover" src={item.thumbnail} alt={item.title}/>
+                </Button>
+              </Tooltip>
             </GridListTile>
           )
         })}

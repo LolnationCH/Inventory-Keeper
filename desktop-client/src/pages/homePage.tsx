@@ -104,16 +104,18 @@ export class HomePage extends React.Component<any, any>{
             {this.state.Books.splice(0, 8).map( function(item: Book){
                 return (
                   <Grid key={item.id}>
-                    <Button component={Link} to={"/books/" + item.identifier.identifier}>
-                      <img className="BookCover" src={item.thumbnail} alt={item.title}/>
-                    </Button>
+                    <Tooltip title={item.title} arrow>
+                      <Button component={Link} to={"/books/" + item.identifier.identifier}>
+                        <img className="BookCover" src={item.thumbnail} alt={item.title}/>
+                      </Button>
+                    </Tooltip>
                   </Grid>
                 )
             })}
             <Grid>
-              <Tooltip title="See more items" arrow>
+              <Tooltip title="See more books" arrow>
                 <Button component={Link} to={"/catalog"}>
-                  <img className="BookCover" src="https://i.imgur.com/QWa1CA7.png" alt="More items"/>
+                  <img className="BookCover" src="https://i.imgur.com/MEHX8c8.png" alt="More items"/>
                 </Button>
               </Tooltip>
             </Grid>
