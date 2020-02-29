@@ -128,7 +128,6 @@ export class BookPage extends React.Component<any, any> {
     // Get all the books
     GetBooksData().then( (books : Array<Book>) => {
       var id = this.props.match.params.id;
-      console.log(id);
 
       // Find the book required with the ISBN
       var book = books.find(function(item: Book) {
@@ -357,7 +356,6 @@ export class BookPage extends React.Component<any, any> {
       this._bookGoogleBook(ISBNsearch) // Search with GoogleBook Api
       .then( () => {} )
       .catch( (booksFound: Array<Book>) => {
-        console.log(booksFound);
         this._bookOpenLibrary(ISBNsearch) // Search with OpenLibrary Api
         .then(()=>{})
         .catch(() => {
@@ -379,7 +377,6 @@ export class BookPage extends React.Component<any, any> {
   OnBackClick() {
     GetBooks().then( (books: Array<Book>) => {
       var index = books.findIndex((element:Book) => {
-        console.log(this.OriginalBook.identifier.identifier);
         return element.identifier.identifier === this.OriginalBook.identifier.identifier;
       });
       if (index > 0){
@@ -394,7 +391,6 @@ export class BookPage extends React.Component<any, any> {
   OnForwardClick() {
     GetBooks().then( (books: Array<Book>) => {
       var index = books.findIndex((element:Book) => {
-        console.log(this.OriginalBook.identifier.identifier);
         return element.identifier.identifier === this.OriginalBook.identifier.identifier;
       });
       if (index < books.length - 1){
