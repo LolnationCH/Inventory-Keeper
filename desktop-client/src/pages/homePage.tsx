@@ -4,7 +4,7 @@ import "./homePage.css"
 // @ts-ignore
 import { Offline, Online } from "react-detect-offline";
 import { TestConnection, getUrlServer, GetBooksData } from "../queries/BookQuery";
-import { GridList, GridListTile, Button, Grid } from "@material-ui/core";
+import { Button, Grid, Tooltip } from "@material-ui/core";
 import { Book } from "../data/book";
 import { Link } from "react-router-dom";
 
@@ -23,12 +23,6 @@ const homePageInfoStyleRed = {
     border: '1px solid red',
     color: 'black',
     padding: '10px'
-  }
-}
-
-const gridListStyle = {
-  style: {
-    flexWrap: 'nowrap' as 'nowrap',
   }
 }
 
@@ -107,19 +101,22 @@ export class HomePage extends React.Component<any, any>{
           </Grid>
         </Grid>
         <Grid container>
-          <Grid item xs>
-            <GridList {...gridListStyle} cols={7}>
-              {this.state.Books.splice(0, 8).map( function(item: Book){
+            {this.state.Books.splice(0, 8).map( function(item: Book){
                 return (
-                  <GridListTile key={item.id}>
+                  <Grid key={item.id}>
                     <Button component={Link} to={"/books/" + item.identifier.identifier}>
                       <img className="BookCover" src={item.thumbnail} alt={item.title}/>
                     </Button>
-                  </GridListTile>
+                  </Grid>
                 )
-              })}
-            </GridList>
-          </Grid>
+            })}
+            <Grid>
+              <Tooltip title="See more items" arrow>
+                <Button component={Link} to={"/catalog"}>
+                  <img className="BookCover" src="https://i.imgur.com/QWa1CA7.png" alt="More items"/>
+                </Button>
+              </Tooltip>
+            </Grid>
         </Grid>
       </div>
     )

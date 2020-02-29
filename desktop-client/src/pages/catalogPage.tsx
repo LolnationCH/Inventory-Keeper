@@ -12,16 +12,32 @@ import { SortBooksByFilters } from "./catalogFunctions";
 type CatalogPageSate = {
   searchValue: string;
   bookGrid: JSX.Element;
+  width: number;
+  height: number;
+  cols: number;
+  NeedRefresh: boolean;
 }
 
+// If we change the height and weight of the bookCover class, need to change the const values
+const imageWidth = 128;
+const imageHeight = 182;
+
 export class CatalogPage extends React.Component<any, CatalogPageSate>{
+  grid:any;
+
+  bookCache: Array<Book> = new Array<Book>();
 
   constructor(props: any) {
     super(props);
     this.state = {
       searchValue: "",
-      bookGrid: <div/>
+      bookGrid: <div/>,
+      width: 0,
+      height: 0,
+      cols:10,
+      NeedRefresh: false,
     };
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
 
   _refresh(){
@@ -51,9 +67,16 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
   }
 
   GetBooksGrid() {
-    return this.GetBooksToShow().then((Data: Array<Book>) => {
-      return this.GetBooksGridList(Data);
-    })
+    if (this.bookCache.length === 0)
+      return this.GetBooksToShow().then((Data: Array<Book>) => {
+        this.bookCache = Data;
+        return this.GetBooksGridList(Data);
+      })
+    else
+      return new Promise<JSX.Element>( (resolve:any, reject:any) => {
+        resolve(this.GetBooksGridList(this.bookCache));
+        reject(undefined);
+      });
   }
 
   GetTopBar() {
@@ -65,9 +88,31 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
       />
     )
   }
+  
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+  
+  updateWindowDimensions() {
+    this.setState({ 
+      width: window.innerWidth, 
+      height: window.innerHeight, 
+      cols: Math.floor(((2*window.innerWidth)/3)/imageWidth),
+      NeedRefresh: true,
+    });
+  }
 
   componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
     this._refresh();
+  }
+
+  componentDidUpdate() {
+    if (this.state.NeedRefresh) {
+      this._refresh();
+      this.setState({NeedRefresh : false});
+    }
   }
 
   DivErrorServer() {
@@ -80,7 +125,7 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
 
   GetBooksGridList(Books: Array<Book>) {
     return (
-      <GridList cellHeight={182} spacing={10} cols={10}>
+      <GridList cellHeight={imageHeight} spacing={10} cols={this.state.cols}>
         {Books.map( function(item: Book){
           return (
             <GridListTile key={item.id}>
