@@ -1,13 +1,21 @@
 import * as React from "react";
 import "./homePage.css"
 
-// @ts-ignore
-import { Offline, Online } from "react-detect-offline";
-import { TestConnection, getUrlServer, GetBooksData } from "../queries/BookQuery";
 import { Button, Grid, Tooltip } from "@material-ui/core";
-import { Book } from "../data/book";
 import { Link } from "react-router-dom";
 
+/* QUERIES */
+import { TestConnection, getUrlServer, GetBooksData } from "../queries/BookQuery";
+
+/* DATA STRUCTURE */
+import { Book } from '../data/book';
+
+// @ts-ignore
+// We need ts-ignore for the react-detect-offline lib
+import { Offline, Online } from "react-detect-offline";
+
+
+// Styles
 const homePageInfoStyleGreen = {
   style: {
     marginLeft:'30px',
@@ -15,8 +23,7 @@ const homePageInfoStyleGreen = {
     color: 'black',
     padding: '10px'
   }
-}
-
+};
 const homePageInfoStyleRed = {
   style: {
     marginLeft:'30px',
@@ -26,20 +33,24 @@ const homePageInfoStyleRed = {
   }
 }
 
-export class HomePage extends React.Component<any, any>{
+type HomePageState = {
+  ServerConnectionStatus: JSX.Element;
+  Books: Array<Book>;
+}
+
+export class HomePage extends React.Component<any, HomePageState>{
 
   constructor(props:any) {
     super(props);
+
+    // Set state
     this.state = {
-      serverConnectionStatus: this._getNoConnectionStatusDiv("Server Connection"),
+      ServerConnectionStatus: this._getNoConnectionStatusDiv("Server Connection"),
       Books: []
     }
-
-    this._serverConnectionStatus = this._serverConnectionStatus.bind(this);
-    this._internetConnectionStatus = this._internetConnectionStatus.bind(this);
-    this.GridLatestModifiedBooks = this.GridLatestModifiedBooks.bind(this);
   }
 
+  // Internet Connection Status Div
   _getNoConnectionStatusDiv(text: string) {
     return (
       <div className="homePageInfoDiv" {...homePageInfoStyleRed}>
@@ -57,7 +68,7 @@ export class HomePage extends React.Component<any, any>{
     )
   }
 
-  _internetConnectionStatus() {
+  _internetConnectionStatus = () => {
     return (
       <div>
         <Offline>
@@ -69,15 +80,15 @@ export class HomePage extends React.Component<any, any>{
       </div>
     )
   }
-  _serverConnectionStatus(): any{
+  _serverConnectionStatus = () => {
     TestConnection(getUrlServer() + "/api").then( () => {
       this.setState({
-        serverConnectionStatus: this._getOkConnectionStatusDiv("Server Connection")
+        ServerConnectionStatus: this._getOkConnectionStatusDiv("Server Connection")
       })
     })
     .catch( () => {
       this.setState({
-        serverConnectionStatus: this._getNoConnectionStatusDiv("Server Connection")
+        ServerConnectionStatus: this._getNoConnectionStatusDiv("Server Connection")
       })
     });
   }
@@ -85,14 +96,16 @@ export class HomePage extends React.Component<any, any>{
   componentDidMount() {
     this._serverConnectionStatus();
 
-    GetBooksData().then( (Data:any) => {
+    GetBooksData()
+    .then( (Data:any) => {
       this.setState({
         Books: Data.reverse()
       })
-    });
+    })
+    .catch(() => {});
   }
 
-  GridLatestModifiedBooks() {
+  GridLatestModifiedBooks = () => {
     return (
       <div>
         <Grid container>
@@ -101,24 +114,24 @@ export class HomePage extends React.Component<any, any>{
           </Grid>
         </Grid>
         <Grid container>
-            {this.state.Books.splice(0, 8).map( function(item: Book){
-                return (
-                  <Grid key={item.id}>
-                    <Tooltip title={item.title} arrow>
-                      <Button component={Link} to={"/books/" + item.identifier.identifier}>
-                        <img className="BookCover" src={item.thumbnail} alt={item.title}/>
-                      </Button>
-                    </Tooltip>
-                  </Grid>
-                )
-            })}
-            <Grid>
-              <Tooltip title="See more books" arrow>
-                <Button component={Link} to={"/catalog"}>
-                  <img className="BookCover" src="https://i.imgur.com/MEHX8c8.png" alt="More items"/>
-                </Button>
-              </Tooltip>
-            </Grid>
+          {this.state.Books.splice(0, 8).map( function(item: Book){
+              return (
+                <Grid key={item.id}>
+                  <Tooltip title={item.title} arrow>
+                    <Button component={Link} to={"/books/" + item.identifier.identifier}>
+                      <img className="BookCover" src={item.thumbnail} alt={item.title}/>
+                    </Button>
+                  </Tooltip>
+                </Grid>
+              )
+          })}
+          <Grid>
+            <Tooltip title="See more books" arrow>
+              <Button component={Link} to={"/catalog"}>
+                <img className="BookCover" src="https://i.imgur.com/MEHX8c8.png" alt="More items"/>
+              </Button>
+            </Tooltip>
+          </Grid>
         </Grid>
       </div>
     )
@@ -126,13 +139,12 @@ export class HomePage extends React.Component<any, any>{
 
   render(){
     return (
-      //<div className="homePageDiv">
-      <div>
+      <div className="homePageDiv">
         <h1>Inventory Keeper</h1>
         <div>
           {this._internetConnectionStatus()}
           <p/>
-          {this.state.serverConnectionStatus}
+          {this.state.ServerConnectionStatus}
           <p/>
         </div>
         <hr/>

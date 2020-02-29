@@ -1,12 +1,15 @@
 import React from 'react';
 import './App.css';
+
 import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom';
 import { Grid } from '@material-ui/core';
 import { BrowserView, MobileView} from "react-device-detect";
 import { ToastContainer } from 'react-toastify';
 
+/* COMPONENTS */
 import { LeftActionBar } from './components/leftActionBar';
 
+/* PAGES */
 import { HomePage } from './pages/homePage';
 import { AboutPage } from './pages/aboutPage';
 import { CatalogPage } from './pages/catalogPage';

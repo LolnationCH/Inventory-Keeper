@@ -6,6 +6,7 @@ import { Book } from "../data/book";
 import { GetBooksData } from "../queries/BookQuery";
 
 
+// Get the books in a grid list
 export function GetBooksGridList(Books: Array<Book>) {
   return (
     <GridList cellHeight={182} spacing={10} cols={10}>
@@ -22,6 +23,11 @@ export function GetBooksGridList(Books: Array<Book>) {
   )
 }
 
+// Sort function for the books
+// The order is by :
+//    - Title
+//    - Type
+//    - VolumeNumber
 export function SortBooksByFilters(booksArr: Array<Book>){
   var books = booksArr;
 
@@ -36,7 +42,6 @@ export function SortBooksByFilters(booksArr: Array<Book>){
 
     if (sortNumber === 0 && a.volumeNumber !== undefined && b.volumeNumber !== undefined)
       sortNumber = a.volumeNumber < b.volumeNumber ? -1 : a.volumeNumber > b.volumeNumber ? 1 : 0;
-      
 
     return sortNumber;
   });
@@ -44,15 +49,20 @@ export function SortBooksByFilters(booksArr: Array<Book>){
   return books
 }
 
+// Get Books filtered by SortBooksByFilters
 export function GetBooks(){
-  return GetBooksData().then( (Data:any) => {
+  return GetBooksData()
+  .then( (Data:any) => {
     return SortBooksByFilters(Data);
+  })
+  .catch(() => {
+    alert("Connexion to the server failed. Make sure that the server is runnning and that your are connected to the internet.");
   });
 }
 
-
 /*
-// Quick fix in case books get corrupted
+// Quick fix in case books miss the id's
+// This simply takes the books and re-apply the class construction
 function quickFix(data: Array<Book>){
   var Books = new Array<Book>();
   for (let dat of data){

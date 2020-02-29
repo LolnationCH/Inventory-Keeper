@@ -1,8 +1,13 @@
 import * as React from "react";
 import { GridList, GridListTile, Button, TextField, Grid } from "@material-ui/core";
+
+/* DATA STRUCTURE */
 import { Book, Identifier } from "../data/book";
+
+/* QUERIES */
 import { GetBooksData, SendBooksData } from "../queries/BookQuery";
 
+// Style
 const TextFieldProps = {
   style : {marginBottom:"20px", marginTop:"5px"},
   fullWidth: true,
@@ -10,6 +15,8 @@ const TextFieldProps = {
   variant: "outlined" as "outlined"
 };
 
+// Function for the save button for a book
+// This will add the book to the library
 function handleSave(item: any){
   var book = new Book();
   book.SetBase(
@@ -28,12 +35,17 @@ function handleSave(item: any){
   book.setIdentifier(item.identifier.identifier);
 
   // Save book to the database
-  GetBooksData().then( (Data:Array<Book>) => {
+  GetBooksData()
+  .then( (Data:Array<Book>) => {
     Data.push(book);
     SendBooksData(Data, "Book added to the library");
+  })
+  .catch(() => {
+    alert("Connexion to the server failed. Make sure that the server is runnning and that your are connected to the internet.");
   });
 }
 
+// This function makes a custom gridlist for show casing books found that are similair to the ones queryed
 function GetSelectionBooksGridList(Books: Array<Book>) {
   return (
     <GridList cellHeight={182} spacing={10} cols={1}>
@@ -57,16 +69,16 @@ function GetSelectionBooksGridList(Books: Array<Book>) {
   )
 }
 
+// If no book found (error or other)
 function DivNoBooks() {
   return (
     <div>
-      No books found
+      No books found. Press back to return and try again.
     </div>
   )
 }
 
 export class BookSelectionPage extends React.Component{
-  
   render(){
     var books = localStorage.getItem('bookSelection');
     if (!books)

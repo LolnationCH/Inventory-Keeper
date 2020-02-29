@@ -1,99 +1,113 @@
-import { GetBooksData } from "../queries/BookQuery";
-
 import * as React from "react";
-import SearchBar from 'material-ui-search-bar'
-
-import { Book } from "../data/book";
 import { GridList, GridListTile, Button, Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import SearchBar from 'material-ui-search-bar'
+
+/* DATA STRUCTURES*/
+import { Book } from "../data/book";
+
+/* CATALOG FUNCTIONS */
 import { SortBooksByFilters } from "./catalogFunctions";
+
+/* QUERIES */
+import { GetBooksData } from "../queries/BookQuery";
 
 
 type CatalogPageSate = {
-  searchValue: string;
-  bookGrid: JSX.Element;
-  width: number;
-  height: number;
-  cols: number;
-  NeedRefresh: boolean;
+  searchValue: string;   // The search value for the books, used to filter the bookGrid
+  bookGrid: JSX.Element; // The grid containing the books
+  width: number;         // Width of the window
+  height: number;        // Heigth of the window
+  cols: number;          // Number of columns for the grid
+  NeedRefresh: boolean;  // Specified if we need to recalculate the grid
 }
 
-// If we change the height and weight of the bookCover class, need to change the const values
+// If we change the height and weight of the bookCover class (in the .css), need to change the const values
 const imageWidth = 128;
 const imageHeight = 182;
 
 export class CatalogPage extends React.Component<any, CatalogPageSate>{
-  grid:any;
-
+  // Book cache, to not bother the api every time the user resize the view
   bookCache: Array<Book> = new Array<Book>();
 
   constructor(props: any) {
     super(props);
+
+    // Set state
     this.state = {
       searchValue: "",
       bookGrid: <div/>,
-      width: 0,
+      width:  0,
       height: 0,
-      cols:10,
+      cols:   10,
       NeedRefresh: false,
     };
-    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
 
+  // Refresh the view. 
+  // This is used by the search bar and the resize
   _refresh(){
     this.GetBooksGrid().then((element: JSX.Element) => {
       this.setState({
         bookGrid: element
       })
-    }).catch( (err) => {
+    }).catch( (err: any) => {
       this.setState({
         bookGrid: this.DivErrorServer()
       })
     });
   }
 
-  GetBooksToShow() : Promise<Array<Book>> {
-    return GetBooksData().then( (Data:any) => {
-      const searchQuery = this.state.searchValue.toLowerCase();
-      var books = Data
-      if (searchQuery !== ""){
-        // Filter the books, replace with a fuzzy search?
-        books = books.filter( (item: Book) => {
-          return item.title?.toLowerCase().includes(searchQuery);
-        });
-      }
-      return SortBooksByFilters(books);
-    });
+  // Return the book list
+  GetBooksToShow(Data:any) : Array<Book> {
+    const searchQuery = this.state.searchValue.toLowerCase();
+    var books = Data;
+
+    // If we have specified a search term, filter the books not matching it.
+    if (searchQuery !== ""){
+      // Filter the books, replace with a fuzzy search?
+      books = books.filter( (item: Book) => {
+        return item.title?.toLowerCase().includes(searchQuery);
+      });
+    }
+    return SortBooksByFilters(books);
   }
 
-  GetBooksGrid() {
-    if (this.bookCache.length === 0)
-      return this.GetBooksToShow().then((Data: Array<Book>) => {
-        this.bookCache = Data;
-        return this.GetBooksGridList(Data);
-      })
+  // Get the book grids
+  // If the book were already fetch from the API, simply use the cache
+  GetBooksGrid() : Promise<JSX.Element> {
+    if (this.bookCache.length === 0) {
+      return GetBooksData().then( (Data:any) => {
+          var Books = this.GetBooksToShow(Data);
+          this.bookCache = Books;
+          return this.GetBooksGridList(Books);
+      });
+    }
     else
       return new Promise<JSX.Element>( (resolve:any, reject:any) => {
-        resolve(this.GetBooksGridList(this.bookCache));
+        resolve(this.GetBooksGridList(this.GetBooksToShow(this.bookCache)));
         reject(undefined);
       });
   }
 
-  GetTopBar() {
+  // Return the search bar
+  GetTopBar() : JSX.Element {
     return (
       <SearchBar
         value={this.state.searchValue}
-        onChange={(value) => { this.setState({searchValue: value}); this._refresh(); }}
-        onCancelSearch={() => { this.setState({searchValue: ""}); this._refresh();}}
+        onChange={(value) => { this.setState({searchValue: value, NeedRefresh:true});}}
+        onCancelSearch={() => { this.setState({searchValue: "", NeedRefresh:true});}}
       />
     )
   }
   
+  // Remove the resize listener
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
   }
   
-  updateWindowDimensions() {
+  // Get the dimension of the window, and recalculat the number of cols for the grid
+  updateWindowDimensions = () => {
     this.setState({ 
       width: window.innerWidth, 
       height: window.innerHeight, 
@@ -102,12 +116,14 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
     });
   }
 
+  // Add the listener on resize
   componentDidMount() {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
     this._refresh();
   }
 
+  // Check if we need to refresh the view
   componentDidUpdate() {
     if (this.state.NeedRefresh) {
       this._refresh();
@@ -115,7 +131,8 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
     }
   }
 
-  DivErrorServer() {
+  // If the server couldn't be found, this function is used
+  DivErrorServer() : JSX.Element {
     return (
       <div>
         Couldn't find the server
@@ -123,7 +140,8 @@ export class CatalogPage extends React.Component<any, CatalogPageSate>{
     )
   }
 
-  GetBooksGridList(Books: Array<Book>) {
+  // Use the books passed in arguments to construct a GridList to showcase the books
+  GetBooksGridList(Books: Array<Book>): JSX.Element {
     return (
       <GridList cellHeight={imageHeight} spacing={10} cols={this.state.cols}>
         {Books.map( function(item: Book){

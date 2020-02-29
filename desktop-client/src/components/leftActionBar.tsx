@@ -1,20 +1,28 @@
 import * as React from "react";
-
-import { GetButtonBooks, GetButtonOthers, GetButtonBooksSmall, GetButtonOthersSmall } from "./buttons";
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { Button } from "@material-ui/core";
 
-export class LeftActionBar extends React.Component<any,any> {
+/* ICONS */
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+
+import { GetButtonBooks, GetButtonOthers, GetButtonBooksSmall, GetButtonOthersSmall } from "./buttons";
+
+type LeftActionBarState = {
+  smallVersion: boolean; // Use to alternate between small/large version of drawer
+}
+
+export class LeftActionBar extends React.Component<any,LeftActionBarState> {
   constructor(props: any){
     super(props);
+
+    // Setting state
     this.state = {
       smallVersion: true
     }
-    this._buttons = this._buttons.bind(this);
   }
 
-  _buttons(){
+  // Function to provide the buttons for the drawer
+  _buttons = () => {
     if (this.state.smallVersion)
       return (
         <div>

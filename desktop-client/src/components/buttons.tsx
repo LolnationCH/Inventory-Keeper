@@ -1,16 +1,14 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { Button } from "@material-ui/core";
 
 /* ICONS */
 import HomeIcon from '@material-ui/icons/Home';
 import AddIcon from '@material-ui/icons/Add';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-// import SyncIcon from '@material-ui/icons/Sync';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
-
 import SettingsIcon from '@material-ui/icons/Settings';
 import InfoIcon from '@material-ui/icons/Info';
-import { Button } from "@material-ui/core";
 
 // Declare drawer items info
 export const ItemsBooks = [
@@ -25,6 +23,7 @@ const ItemsOthers = [
   {text: "About"   , icon: <InfoIcon/>,       page: "/about"}
 ]
 
+// Helper functions
 function GetIconButton(text: String, icon: JSX.Element, page: string) {
   return (
     <Button
@@ -52,6 +51,7 @@ function GetIconButtonSmall(icon: JSX.Element, page: string) {
   )
 }
 
+// Get Buttons Function
 export function GetButtonBooks() {
   return (
     <div>

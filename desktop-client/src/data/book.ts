@@ -1,8 +1,11 @@
+
+// ISBN identifiers
 const ISBN_type = {
   10 : "ISBN_10",
   13 : "ISBN_13"
 };
 
+// Class for the handling the identifier
 export class Identifier {
   identifier: string;
 
@@ -11,6 +14,8 @@ export class Identifier {
   }
 }
 
+
+// Thumbnail (cover) utilities
 const defaultThumbnail = "https://i.imgur.com/QWa1CA7.png";
 
 export function GetGoogleThumbnail(isbn: string){
@@ -23,13 +28,16 @@ export function GetOpenLibraryThumbnail(isbn: string){
 export function IsGoogleThumbnail(url: string) {
   return url.includes("google");
 }
-
 export function IsOpenLibraryThumbnail(url: string) {
   return url.includes("openlibrary");
 }
 
+// Uuidv4 for unique id for the book.
+// This is used to find a specific boook in the list.
+// We cannot use the ISBN since the user could want to change the IBSN of a book.
 const uuidv4 = require('uuid/v4');
 
+// Book class, for handling everything related to the books
 export class Book {
   id:            string = uuidv4();
   title:         string | undefined;
@@ -58,9 +66,11 @@ export class Book {
     this.type          = "";
   }
 
+  // Shorthand for setting the identifier
   setIdentifier(identifier: string) { this.identifier.identifier = identifier; }
   getIdentifier() : string { return this.identifier.identifier; }
 
+  // Constructor with parameters
   SetBase(title: string, volumeNumber: Number, authors: Array<string>, publisher: string, publishedDate: string,
               description: string, identifier: Identifier, pageCount: Number, thumbnail: string, language: string, type: string) {
     this.title         = title;
@@ -91,6 +101,7 @@ export class Book {
   }
 }
 
+// Parse response from Google Books Api
 export function parseFromGoogleJson(googleBookObj: any): Book {
   var book = new Book();
   const volumeInfo = googleBookObj["volumeInfo"];
@@ -118,19 +129,24 @@ export function parseFromGoogleJson(googleBookObj: any): Book {
       book.setIdentifier(industryIdentifier["identifier"]);
   }
 
+  // Why not used the one provided in the json? Because sometimes it is not...
+  // This api reliability sometime suck, but I don't think it's Google fault.
+  // Some books can not even be found, but the cover can!
   book.thumbnail = GetGoogleThumbnail(book.getIdentifier());
   return book;
 }
 
+// Parse response from OpenLibrary Api
+// Returns null if no book were found.
 export function parseFromOpenLibraryJson(openLibraryObj: any): Book | null {
   if (openLibraryObj["details"] == null)
     return null;
-
+  
+  // Initialize stuff
+  var book = new Book();
   const details = openLibraryObj["details"];
 
-  // Get the book info
-  var book = new Book();
-
+  // Set the book info
   if (details["title"] != null)
     book.title = details["title"];
   if (details["isbn_13"] != null)

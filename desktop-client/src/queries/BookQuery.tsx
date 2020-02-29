@@ -1,11 +1,15 @@
-import { Book } from "../data/book.js";
 import { toast } from "react-toastify";
+
+/* DATA STRUCTURE */
+import { Book } from "../data/book.js";
 
 var rp = require('request-promise');
 
 // Local fetches/post
 const defaultServerUrl = 'http://localhost:6969'
 
+// Get the url for the server in the cache.
+// If not found, use the default one
 export function getUrlServer():string {
   var urlStored = localStorage.getItem('serverUrl');
   if (!urlStored || urlStored === "")
@@ -14,6 +18,7 @@ export function getUrlServer():string {
     return urlStored;
 }
 
+// Test the connection to the server
 export function TestConnection(uri: string): Promise<any> {
   const options = {
     uri: uri,
@@ -22,6 +27,7 @@ export function TestConnection(uri: string): Promise<any> {
   return rp(options);
 }
 
+// Get the data for the books on the server
 export function GetBooksData(): any{ 
   const options = {
     uri: getUrlServer() + "/api/books",
@@ -30,6 +36,7 @@ export function GetBooksData(): any{
   return rp(options);
 }
 
+// Send the books data to the server
 export function SendBooksData(books: Array<Book>, sucessToastMessage: string = "") {
   const options = {
     method: 'POST',
@@ -47,8 +54,8 @@ export function SendBooksData(books: Array<Book>, sucessToastMessage: string = "
   });
 }
 
-// External fetches
-
+//-- External fetches
+// Get book data from Google
 export function GetBookDataFromGoogle(isbn: string): Promise<any>{
   const googleBookAPI = `https://www.googleapis.com/books/v1/volumes?q=isbn${isbn}`;
   const options = {
@@ -58,6 +65,7 @@ export function GetBookDataFromGoogle(isbn: string): Promise<any>{
   return rp(options);
 }
 
+// Get book data from OpenLibrary
 export function GetBookDataFromOpenLibraryApi(isbn: string): Promise<any>{
   const openLibraryApi = `https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&jscmd=details&format=json`
   const options = {

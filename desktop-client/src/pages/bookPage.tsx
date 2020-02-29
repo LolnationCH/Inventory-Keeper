@@ -3,12 +3,14 @@ import { TextField, Grid, Button, IconButton } from "@material-ui/core";
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from "react-toastify";
 
+/* ICONS */
 import SaveIcon from '@material-ui/icons/Save';
 import SearchIcon from '@material-ui/icons/Search';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
-// Book Query Imports
+
+/* QUERIES */
 import {
   GetBooksData,
   SendBooksData,
@@ -16,7 +18,7 @@ import {
   GetBookDataFromOpenLibraryApi
 } from "../queries/BookQuery";
 
-// Book Object Imports
+/* DATA STRUCTURE */
 import { 
   Book,
   Identifier,
@@ -26,14 +28,21 @@ import {
   GetOpenLibraryThumbnail,
   IsOpenLibraryThumbnail
 } from "../data/book";
+
+/* CATALOG FUNCTION */
 import { GetBooks } from "./catalogFunctions";
 
+
+// This pages modes.
+//  - FIX : Cannot edit the textfields (they are disabled)
+//  - EMPTY/EDITING : For future implementation
 export enum BookPageModes {
   EMPTY,
   EDITING,
   FIX
 }
 
+// STYLES
 const ButtonProps = {
   style : {
     marginBottom:"20px",
@@ -41,8 +50,7 @@ const ButtonProps = {
   },
   fullWidth: true,
   variant: "contained" as "contained"
-}
-
+};
 const ButtonSaveProps = {
   style : {
     marginBottom:"20px",
@@ -54,14 +62,20 @@ const ButtonSaveProps = {
   variant: "contained" as "contained"
 }
 
+// We probably could use a type for the state, but it breaks _handleTextFieldChange
 export class BookPage extends React.Component<any, any> {
   TextFieldProps : any;
+
+  // Used to keep a copy of what was the book originaly.
+  // This allow to modify the book when hitting save
   OriginalBook: Book = new Book();
 
   constructor(props: any) {
     super(props);
 
     var book = new Book();
+
+    // Set state
     this.state = {
       title: book.title,
       volumeNumber: book.volumeNumber,
@@ -78,14 +92,6 @@ export class BookPage extends React.Component<any, any> {
       ISBNsearch: ''
     }
 
-    this._handleTextFieldChange = this._handleTextFieldChange.bind(this);
-    this._handleSwitchThumbnail = this._handleSwitchThumbnail.bind(this);
-    this._saveBook = this._saveBook.bind(this);
-    this._searchForBook = this._searchForBook.bind(this);
-    this._deleteBook = this._deleteBook.bind(this);
-    this.OnBackClick = this.OnBackClick.bind(this);
-    this.OnForwardClick = this.OnForwardClick.bind(this);
-
     this.TextFieldProps = {
       style : {marginBottom:"20px", marginTop:"5px"},
       fullWidth: true,
@@ -94,6 +100,7 @@ export class BookPage extends React.Component<any, any> {
     };
   }
 
+  // Completly sets the book page info with the book
   _setStateWithBook(book: Book) {
     this.setState({
       title:         book.title,
@@ -110,6 +117,9 @@ export class BookPage extends React.Component<any, any> {
     });
   }
 
+  // Partially set the page info with the book.
+  // This is used by the Queries to fill the info that is received.
+  // Since not all the fields are filled by the APIs, we must not set the one with invalid values
   _partialSetStateWithBook(book: Book) {
     this.setState({
       title:         book.title,
@@ -143,6 +153,19 @@ export class BookPage extends React.Component<any, any> {
     });
   }
 
+  // Functions for the topbar
+  _createTopBar(Mode : BookPageModes)
+  {
+    switch ( Mode ) {
+      case BookPageModes.EMPTY:
+        return this._createTopBarEmpty();
+      case BookPageModes.EDITING:
+        return this._createTopBarEmpty();
+      case BookPageModes.FIX:
+      default:
+        return null;
+    }
+  }
   _createTopBarEmpty() {
     return (
       <Grid container spacing={3}>
@@ -183,31 +206,20 @@ export class BookPage extends React.Component<any, any> {
     )
   }
 
-  _createTopBar(Mode : BookPageModes)
-  {
-    switch ( Mode ) {
-      case BookPageModes.EMPTY:
-        return this._createTopBarEmpty();
-      case BookPageModes.EDITING:
-        return this._createTopBarEmpty();
-      case BookPageModes.FIX:
-      default:
-        return null;
-    }
-  }
-
-  _handleTextFieldChange(e: React.ChangeEvent<HTMLInputElement>) {
+  // functions to handle the changes to the book
+  _handleTextFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({[e.target.id]: e.target.value});
   }
-
-  _handleSwitchThumbnail(e: any) {
+  _handleSwitchThumbnail = (e: any) => {
     if (IsOpenLibraryThumbnail(this.state.thumbnail))
       this.setState({thumbnail: GetGoogleThumbnail(this.state.identifier)})
     else
       this.setState({thumbnail: GetOpenLibraryThumbnail(this.state.identifier)})
   }
 
-  _deleteBook() {
+  // Function to delete the book.
+  // After the book is delete, push back to the catalog
+  _deleteBook = () => {
     GetBooksData().then( (Data:Array<Book>) => {
       var items = Data.filter( (value) => {
         return value.id !== this.OriginalBook.id;
@@ -217,7 +229,9 @@ export class BookPage extends React.Component<any, any> {
     setTimeout(() => { this.props.history.push('/catalog'); }, 500);
   }
 
-  _saveBook(){
+  // Function to save the modification to the book
+  // If the book is not already in the library, add the book to it.
+  _saveBook = () => {
     if (!this.state.title || !this.state.title.trim() ||
         !this.state.identifier || !this.state.identifier.trim()) {
       alert("You have to specify a title and an ISBN");
@@ -261,11 +275,18 @@ export class BookPage extends React.Component<any, any> {
         items.push(book);
         SendBooksData(items,"Changes saved");
       }
+
+      // Set the url to the book
       this.props.history.push(`/books/${book.identifier.identifier}`);
       this.OriginalBook = book;
+    })
+    .catch(() => {
+      alert("Connexion to the server failed. Make sure that the server is runnning and that your are connected to the internet.\nNothing is saved");
     });
   }
 
+  // Function to check if the book is already in the catalog.
+  // If it is, simply reject and push the history to the book.
   _bookInCollection(ISBNsearch: string): Promise<any> {
     return (
       GetBooksData().then( (books : Array<Book>) => {
@@ -276,9 +297,13 @@ export class BookPage extends React.Component<any, any> {
           }
         }
         return Promise.resolve();
+      })
+      .catch(() => {
+        alert("Connexion to the server failed. Make sure that the server is runnning and that your are connected to the internet.");
       }));
   }
 
+  // Get the book from the OpenLibrary API
   _bookOpenLibrary(ISBNsearch: string): Promise<any> {
     return (
       GetBookDataFromOpenLibraryApi(ISBNsearch).then( (data:any) => {
@@ -313,6 +338,7 @@ export class BookPage extends React.Component<any, any> {
     );
   }
 
+  // Get the book from the Google API
   _bookGoogleBook(ISBNsearch: string): Promise<any> {
     return (
       GetBookDataFromGoogle(ISBNsearch).then( (data:any) => {
@@ -346,7 +372,9 @@ export class BookPage extends React.Component<any, any> {
     )
   }
 
-  _searchForBook(){
+  // Search for the book.
+  // This is use all the API calls possible
+  _searchForBook = () => {
     const ISBNsearch = this.state.ISBNsearch;
     if (!ISBNsearch || !ISBNsearch.trim())
       alert("The search for the ISBN cannot be empty, please specify a value")
@@ -374,7 +402,8 @@ export class BookPage extends React.Component<any, any> {
     .catch( () => {});
   }
 
-  OnBackClick() {
+  // Navigate back in the catalog
+  OnBackClick = () => {
     GetBooks().then( (books: Array<Book>) => {
       var index = books.findIndex((element:Book) => {
         return element.identifier.identifier === this.OriginalBook.identifier.identifier;
@@ -388,7 +417,8 @@ export class BookPage extends React.Component<any, any> {
     });
   }
 
-  OnForwardClick() {
+  // Navigate forward in the catalog
+  OnForwardClick = () => {
     GetBooks().then( (books: Array<Book>) => {
       var index = books.findIndex((element:Book) => {
         return element.identifier.identifier === this.OriginalBook.identifier.identifier;
@@ -402,6 +432,7 @@ export class BookPage extends React.Component<any, any> {
     });
   }
 
+  // Returns the JSX.Element for the thumbnail
   getThumbnail() {
     return (
       <Grid container spacing={0} justify="center">
@@ -414,6 +445,7 @@ export class BookPage extends React.Component<any, any> {
     );
   }
 
+  // Returns the JSX.Element for the button for a quick cover change
   getButtonCover() {
     if (IsOpenLibraryThumbnail(this.state.thumbnail))
       return (
@@ -440,6 +472,7 @@ export class BookPage extends React.Component<any, any> {
   }
 
   render() {
+    // Check if the page is in FIX mode. If so, we must disable the textfield
     const IsDisabled = this.props.Mode === BookPageModes.FIX;
 
     return(
@@ -448,7 +481,7 @@ export class BookPage extends React.Component<any, any> {
       <Grid container spacing={0}>
         <Grid item style={{paddingRight:"30px"}} xs={5}>
           {this.getThumbnail()}
-          <TextField multiline={true}  {...this.TextFieldProps} id="thumbnail" label="Thumbnail" value={this.state.thumbnail || ''}/>
+          <TextField multiline={true} disabled={IsDisabled} {...this.TextFieldProps} id="thumbnail" label="Thumbnail" value={this.state.thumbnail || ''}/>
           {this.getButtonCover()}
           <p/>
           <Button 
