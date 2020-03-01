@@ -20,9 +20,6 @@
 ### Seeing a book info
 <img width="300" src="Android%20App/BookDetails.jpg"/>
 
-### Export/Import
-<img width="300" src="Android%20App/ExportImport.jpg"/>
-
 ### Drawer
 <img width="300" src="Android%20App/Drawer.jpg"/>
 
