@@ -12,7 +12,7 @@ export class AboutPage extends Component{
         <p>Inventory Keeper</p>
         <p>Made by LolnationCH</p>
         <p>Check out the mobile application!</p>
-        <p>TODO : Add github link</p>
+        <a style={{color:"#c6c6c6"}} href="https://github.com/LolnationCH/Inventory-Keeper">Link to the github repo</a>
       </header>
     )
   }
