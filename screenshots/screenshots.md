@@ -20,6 +20,9 @@
 ### Seeing a book info
 <img width="300" src="Android%20App/BookDetails.jpg"/>
 
+### Editing a book info
+<img width="300" src="Android%20App/BookEdit.jpg"/>
+
 ### Drawer
 <img width="300" src="Android%20App/Drawer.jpg"/>
 
