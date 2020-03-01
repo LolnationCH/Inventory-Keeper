@@ -6,6 +6,18 @@ This project has been started, dropped, restarted about 5 times now.
 
 It's finally mostly done!
 
+## Releases
+
+Android:
+|arm64-v8a|armeabi-v7a|x86_64|
+|---|---|---|
+|[![Download arm64-v8a](https://img.shields.io/badge/dynamic/json.svg?label=download&url=https%3A%2F%2Fapi.github.com%2Frepos%2FLolnationCH%2FInventory-Keeper%2Freleases%2Flatest&query=%24.assets[0].name&style=for-the-badge)](https://github.com/LolnationCH/Inventory-Keeper/releases/latest/download/app-arm64-v8a-release.apk)|[![Download armeabi-v7a](https://img.shields.io/badge/dynamic/json.svg?label=download&url=https%3A%2F%2Fapi.github.com%2Frepos%2FLolnationCH%2FInventory-Keeper%2Freleases%2Flatest&query=%24.assets[1].name&style=for-the-badge)](https://github.com/LolnationCH/Inventory-Keeper/releases/latest/download/app-armeabi-v7a-release.apk)|[![Download x86_64](https://img.shields.io/badge/dynamic/json.svg?label=download&url=https%3A%2F%2Fapi.github.com%2Frepos%2FLolnationCH%2FInventory-Keeper%2Freleases%2Flatest&query=%24.assets[2].name&style=for-the-badge)](https://github.com/LolnationCH/Inventory-Keeper/releases/latest/download/app-x86_64-release.apk)|
+
+Server:
+|Server|
+|----|
+|[![Download Server](https://img.shields.io/badge/dynamic/json.svg?label=download&url=https%3A%2F%2Fapi.github.com%2Frepos%2FLolnationCH%2FInventory-Keeper%2Freleases%2Flatest&query=%24.assets[3].name&style=for-the-badge)](https://github.com/LolnationCH/Inventory-Keeper/releases/latest/download/server.zip)|
+
 ## Ok, but what is it?
 
 There are 3 parts : Android App, Webpage and Server.
@@ -55,8 +67,18 @@ To install, look in the release section for the apk for your phone (if you don't
 
 ## Webpage + Server
 
+> Need npm to work
+
 The webpage is simply a desktop version of the Android App, with a little more features.
 
 The server is a simple backend receiving data and sending data. No security is done to make sure that the data send is correct (it only checks for valid json).
 
 I recommend running it on a Raspberry Pi that is always on, so you can use your main computer to access it.
+
+To run, grab the server.zip in the release section, and then run :
+
+```bash
+npm install && npm start
+```
+
+This will start the server on the [http://localhost:6969](http://localhost:6969). You can then access the server from any computer on your network, using the ip address of the computer.
