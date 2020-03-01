@@ -33,9 +33,11 @@ The Android App can be used in standalone, no need for further stuff, but the We
 - Local and network data. No cloud service, you OWN YOUR DATA. (well, Google still know you ask for the information...).
 - Allow sync to a computer/phone without connecting your phone to your computer.
 
+> Both the app and the web are adaptive. This means that the app supports landscape and portrait orientation and the web supports bigger or smaller screens (to a resonable degree).
+
 ## ScreenShot
 
-I do not own the copyrights to the book shown in the screenshots, they are simply examples : [TODO Link]()
+I do not own the copyrights to the book shown in the screenshots, they are simply examples : [Screenshots](screenshots/screenshots.md)
 
 ## Why you made this/Alternative
 
