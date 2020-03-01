@@ -35,7 +35,7 @@ The Android App can be used in standalone, no need for further stuff, but the We
 
 ## ScreenShot
 
-I do not own the copyrights to the book shown in the screenshots, they are simply examples : [TODO Link]()
+I do not own the copyrights to the book shown in the screenshots, they are simply examples : [Screenshots](screenshots\screenshots.md)
 
 ## Why you made this/Alternative
 
