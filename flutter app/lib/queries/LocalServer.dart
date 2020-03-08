@@ -18,10 +18,13 @@ String getServerUrl() {
 Future<dynamic> getBookData() async {
   try {
     var response = await http.get(
-    Uri.encodeFull(getServerUrl()),
-    headers: {"Accept": "application/json"}); 
+      Uri.encodeFull(getServerUrl()),
+      headers: {"Accept": "application/json"}
+    ).timeout(const Duration(seconds: 15)); 
     return json.decode(response.body);
   } on SocketException {
+    return null;
+  } on TimeoutException{
     return null;
   }
 }
@@ -33,10 +36,13 @@ Future<dynamic> sendBookData(dynamic books) async {
       Uri.encodeFull(getServerUrl()),
       headers: {HttpHeaders.contentTypeHeader : "application/json"},
       body: json.encode(books)
-    );
+    ).timeout(const Duration(seconds: 15));
     res = response;
   } on SocketException {
     return null;
+  } on TimeoutException{
+    return null;
   }
+  
   return res;
 }
