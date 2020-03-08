@@ -18,5 +18,7 @@ flutter build apk --split-per-abi
 To install to phone from pc :
 
 ```bash
+flutter clean
+flutter build apk --release
 flutter install
 ```
