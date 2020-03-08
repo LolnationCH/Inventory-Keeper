@@ -86,14 +86,18 @@ class Book implements Comparable<Book>{
     dynamic volumeInfo = jsonItem["volumeInfo"];
 
     dynamic industryIdentifiers = volumeInfo["industryIdentifiers"];
-    for (int j = 0; j < industryIdentifiers.length; j++)
-    {
-      if (industryIdentifiers[j]["type"] == ISBN_type[13])
-        identifier = new ISBN(industryIdentifiers[j]["identifier"]);
+    if (industryIdentifiers != null){
+      for (int j = 0; j < industryIdentifiers.length; j++)
+      {
+        if (industryIdentifiers[j]["type"] == ISBN_type[13])
+          identifier = new ISBN(industryIdentifiers[j]["identifier"]);
+      }
     }
 
     id = Uuid().v4();
-    title           = volumeInfo["title"];
+    title = '';
+    if (volumeInfo["title"] != null)
+      title           = volumeInfo["title"];
     if (volumeInfo["volumeNumber"] != null)
       volumeNumber  = volumeInfo['volumeNumber'];
     if (volumeInfo["authors"] != null)
