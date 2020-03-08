@@ -9,6 +9,8 @@ flutter pub run flutter_launcher_icons:main
 
 For release :
 
+[Android](https://flutter.dev/docs/deployment/android)
+
 ```bash
 flutter build apk --split-per-abi
 ```
