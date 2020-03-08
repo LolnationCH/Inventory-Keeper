@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:inventory_keeper/view/bookWidgetEditor.dart';
 import 'package:localstorage/localstorage.dart';
@@ -122,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
         decoration: BoxDecoration(
           color: Colors.purple[400],
           image: DecorationImage(
-            image: AssetImage("assets/header.png"),
+            image: CachedNetworkImageProvider("https://images.pexels.com/photos/1134166/pexels-photo-1134166.jpeg"),
             fit: BoxFit.cover
           )
         ),
