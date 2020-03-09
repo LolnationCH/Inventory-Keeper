@@ -37,8 +37,8 @@ export function SortBooksByFilters(booksArr: Array<Book>){
     if (a.title !== undefined && b.title !== undefined)
       sortNumber = a.title < b.title ? -1: a.title > b.title ? 1 : 0;
 
-    if (sortNumber === 0 && a.type !== undefined && b.type !== undefined)
-      sortNumber = a.type < b.type ? -1 : a.type > b.type ? 1 : 0;
+    if (sortNumber === 0 && a.bookType !== undefined && b.bookType !== undefined)
+      sortNumber = a.bookType < b.bookType ? -1 : a.bookType > b.bookType ? 1 : 0;
 
     if (sortNumber === 0 && a.volumeNumber !== undefined && b.volumeNumber !== undefined)
       sortNumber = a.volumeNumber < b.volumeNumber ? -1 : a.volumeNumber > b.volumeNumber ? 1 : 0;

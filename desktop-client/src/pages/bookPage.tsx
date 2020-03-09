@@ -87,7 +87,7 @@ export class BookPage extends React.Component<any, any> {
       pageCount: book.pageCount,
       thumbnail: book.thumbnail,
       language: book.language,
-      type: book.type,
+      bookType: book.bookType,
 
       ISBNsearch: ''
     }
@@ -113,7 +113,7 @@ export class BookPage extends React.Component<any, any> {
       pageCount:     book.pageCount,
       thumbnail:     book.thumbnail,
       language:      book.language,
-      type:          book.type,
+      bookType:      book.bookType,
     });
   }
 
@@ -252,7 +252,7 @@ export class BookPage extends React.Component<any, any> {
       +this.state.pageCount,
       this.state.thumbnail,
       this.state.language,
-      this.state.type,
+      this.state.bookType,
     );
 
     book.setIdentifier(this.state.identifier);
@@ -511,7 +511,7 @@ export class BookPage extends React.Component<any, any> {
           <TextField {...this.TextFieldProps} disabled={IsDisabled} id="pageCount"     label="Page Count"  type="number" value={this.state.pageCount || ''}/>
           <TextField {...this.TextFieldProps} disabled={IsDisabled} id="language"      label="Language"                  value={this.state.language || ''}/>
           <TextField {...this.TextFieldProps} disabled={IsDisabled} id="identifier"    label="ISBN"                      value={this.state.identifier || ''}/>
-          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="type"          label="Type"                      value={this.state.type || ''}/>
+          <TextField {...this.TextFieldProps} disabled={IsDisabled} id="bookType"      label="Type"                      value={this.state.bookType || ''}/>
         </Grid>
       </Grid>
       <TextField {...this.TextFieldProps} multiline={true} disabled={IsDisabled} id="description" label="Description" value={this.state.description || ''}/>

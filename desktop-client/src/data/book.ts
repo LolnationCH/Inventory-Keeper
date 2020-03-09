@@ -50,7 +50,7 @@ export class Book {
   pageCount:     Number | undefined;
   thumbnail:     string | undefined;
   language:      string | undefined;
-  type:          string | undefined;
+  bookType:      string | undefined;
 
   constructor() {
     this.title         = "";
@@ -63,7 +63,7 @@ export class Book {
     this.pageCount     = 0;
     this.thumbnail     = defaultThumbnail;
     this.language      = "";
-    this.type          = "";
+    this.bookType      = "";
   }
 
   // Shorthand for setting the identifier
@@ -72,7 +72,7 @@ export class Book {
 
   // Constructor with parameters
   SetBase(title: string, volumeNumber: Number, authors: Array<string>, publisher: string, publishedDate: string,
-              description: string, identifier: Identifier, pageCount: Number, thumbnail: string, language: string, type: string) {
+              description: string, identifier: Identifier, pageCount: Number, thumbnail: string, language: string, bookType: string) {
     this.title         = title;
     this.volumeNumber  = volumeNumber;
     this.authors       = authors;
@@ -83,7 +83,7 @@ export class Book {
     this.pageCount     = pageCount;
     this.thumbnail     = thumbnail;
     this.language      = language;
-    this.type          = type;
+    this.bookType      = bookType;
   }
 
   isEqual(book: Book): boolean{
@@ -97,7 +97,7 @@ export class Book {
            this.pageCount === book.pageCount &&
            this.thumbnail === book.thumbnail &&
            this.language === book.language &&
-           this.type === book.type;
+           this.bookType === book.bookType;
   }
 }
 

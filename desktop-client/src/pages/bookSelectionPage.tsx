@@ -30,7 +30,7 @@ function handleSave(item: any){
     item.pageCount,
     item.thumbnail,
     item.language,
-    item.type,
+    item.bookType,
   );
   book.setIdentifier(item.identifier.identifier);
 
