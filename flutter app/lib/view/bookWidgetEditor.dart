@@ -229,8 +229,10 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children:<Widget>[
-                  getBookImageButton()
+                children:<Widget>[                 
+                  Expanded(
+                    child:getBookImageButton(),
+                  ),
                 ],
               ),
               Column(
