@@ -61,10 +61,7 @@ class _BookWidgetEditor extends State<BookWidgetEditor>
       child: TextField(
         decoration: InputDecoration(labelText: 'Volume'), 
         controller: volumeController,
-        keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[
-          WhitelistingTextInputFormatter.digitsOnly
-        ]
+        keyboardType: TextInputType.numberWithOptions(decimal:true, signed:false),
       )
     ),
     Align(

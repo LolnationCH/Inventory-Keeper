@@ -44,7 +44,7 @@ class ISBN{
 class Book implements Comparable<Book>{
   String id;
   String title;
-  int volumeNumber;
+  num volumeNumber;
   List<String> authors;
   String publisher;
   String publishedDate;
@@ -64,7 +64,7 @@ class Book implements Comparable<Book>{
 
   void setIdentifier(String identifier) { this.identifier.identifier = identifier; }
   void setAuthors(String authors) { this.authors = authors.split(','); }
-  void setVolumeNumber(String volumeNumber) { this.volumeNumber = int.tryParse(volumeNumber); }
+  void setVolumeNumber(String volumeNumber) { this.volumeNumber = num.tryParse(volumeNumber); }
   void setPageCount(String pageCount) { this.pageCount = int.tryParse(pageCount); }
 
   Book() {
@@ -180,7 +180,7 @@ class Book implements Comparable<Book>{
   Book.fromJson(Map<String, dynamic> json) : 
     id = json['id'],
     title = json['title'],
-    volumeNumber = json['volumeNumber'],
+    volumeNumber = num.tryParse(json['volumeNumber'].toString()),
     authors = new List<String>.from(json['authors']),
     publisher = json['publisher'],
     publishedDate = json['publishedDate'],
